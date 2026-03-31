@@ -1274,7 +1274,7 @@ function closeEbayModal() {
 
 function connectEbay() {
   const token = localStorage.getItem('token');
-  // Redirect to backend OAuth — token passed via localStorage, backend reads state
+  if (!token) { toast('Please log in first', 'error'); return; }
   window.location.href = `${API}/ebay/connect?sandbox=false&token=${token}`;
 }
 
