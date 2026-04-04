@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EbayListAI — Create eBay Listing</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#070d1a;--navy2:#0f1729;--navy3:#111c30;--navy4:#162035;
+  --blue:#2563eb;--blue2:#1d4ed8;--blue3:#3b82f6;--blue-lt:rgba(37,99,235,.12);
+  --cyan:#06b6d4;--green:#10b981;--amber:#f59e0b;--red:#ef4444;--purple:#8b5cf6;
+  --white:#fff;--slate:#64748b;--slate2:#94a3b8;--slate3:#cbd5e1;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.04);
+  --glow:rgba(37,99,235,.4);
+  --f:'Plus Jakarta Sans',sans-serif;--fm:'DM Mono',monospace;
+  --r:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--navy);color:#fff;font-family:var(--f);font-size:15px;line-height:1.6;min-height:100vh;}
+
+/* ─── TOPBAR ─── */
+.topbar{height:60px;background:rgba(7,13,26,.95);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);}
+.tb-logo{display:flex;align-items:center;gap:9px;text-decoration:none;}
+.tb-logo-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff;}
+.tb-logo-text{font-size:17px;font-weight:800;color:#fff;}
+.tb-logo-text span{color:var(--cyan);}
+.tb-center{display:flex;align-items:center;gap:8px;}
+.tb-step{display:flex;align-items:center;gap:6px;font-family:var(--fm);font-size:11px;color:var(--slate);letter-spacing:.04em;padding:5px 12px;border-radius:6px;transition:all .2s;}
+.tb-step.active{background:var(--blue-lt);color:var(--blue3);}
+.tb-step.done{color:var(--green);}
+.tb-step-num{width:18px;height:18px;border-radius:50%;background:var(--navy3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;}
+.tb-step.active .tb-step-num{background:var(--blue);border-color:var(--blue);}
+.tb-step.done .tb-step-num{background:var(--green);border-color:var(--green);}
+.tb-sep{color:var(--border);font-size:12px;}
+.tb-right{display:flex;align-items:center;gap:12px;}
+.tb-user{font-family:var(--fm);font-size:11px;color:var(--slate2);display:flex;align-items:center;gap:7px;}
+.tb-quota{font-family:var(--fm);font-size:11px;color:var(--slate);background:var(--navy3);border:1px solid var(--border);padding:4px 10px;border-radius:6px;}
+.tb-quota span{color:var(--amber);}
+.tb-logout{font-size:12px;color:var(--slate);background:none;border:none;cursor:pointer;font-family:var(--fm);}
+.tb-logout:hover{color:var(--slate2);}
+
+/* ─── LAYOUT ─── */
+.app{display:grid;grid-template-columns:380px 1fr;min-height:calc(100vh - 60px);}
+
+/* ─── LEFT PANEL ─── */
+.left-panel{background:var(--navy2);border-right:1px solid var(--border);padding:24px;overflow-y:auto;max-height:calc(100vh - 60px);position:sticky;top:60px;}
+.lp-section{margin-bottom:28px;}
+.lp-label{font-family:var(--fm);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.lp-label-req{color:var(--red);font-size:11px;}
+
+/* Input mode tabs */
+.mode-tabs{display:flex;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:9px;padding:3px;gap:2px;margin-bottom:18px;}
+.mode-tab{flex:1;padding:8px 6px;text-align:center;font-size:12px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--slate);border-radius:7px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px;}
+.mode-tab.active{background:var(--blue);color:#fff;box-shadow:0 2px 10px var(--glow);}
+.mode-tab svg{flex-shrink:0;}
+
+/* Title input */
+.lp-input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:9px;color:#fff;font-family:var(--f);font-size:14px;padding:11px 14px;outline:none;transition:all .2s;resize:vertical;}
+.lp-input:focus{border-color:rgba(37,99,235,.5);background:rgba(37,99,235,.04);}
+.lp-input::placeholder{color:var(--slate);}
+textarea.lp-input{min-height:80px;line-height:1.6;}
+
+/* Image upload */
+.img-upload-zone{border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(255,255,255,.02);position:relative;}
+.img-upload-zone:hover,.img-upload-zone.drag{border-color:rgba(37,99,235,.5);background:rgba(37,99,235,.04);}
+.img-upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.iuz-icon{font-size:28px;margin-bottom:8px;}
+.iuz-text{font-size:13px;color:var(--slate2);line-height:1.6;}
+.iuz-text strong{color:#fff;}
+.iuz-sub{font-family:var(--fm);font-size:10px;color:var(--slate);margin-top:4px;letter-spacing:.03em;}
+.img-preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;}
+.img-thumb{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;border:1px solid var(--border);}
+.img-thumb img{width:100%;height:100%;object-fit:cover;}
+.img-thumb-rm{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.7);border:none;color:#fff;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;}
+.img-thumb.primary::after{content:'MAIN';position:absolute;bottom:4px;left:50%;transform:translateX(-50%);font-family:var(--fm);font-size:8px;background:var(--blue);color:#fff;padding:2px 6px;border-radius:3px;letter-spacing:.05em;white-space:nowrap;}
+
+/* Condition */
+.cond-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.cond-btn{padding:8px 10px;border-radius:7px;border:1px solid var(--border);background:none;color:var(--slate2);font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;text-align:left;}
+.cond-btn:hover{border-color:rgba(255,255,255,.15);color:#fff;}
+.cond-btn.sel{border-color:var(--blue);background:var(--blue-lt);color:var(--blue3);}
+
+/* Category cascade */
+.cat-cascade{display:flex;flex-direction:column;gap:8px;}
+.cat-select{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:#fff;font-family:var(--f);font-size:13px;padding:9px 12px;outline:none;cursor:pointer;transition:all .2s;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;}
+.cat-select:focus{border-color:rgba(37,99,235,.5);}
+.cat-select option{background:var(--navy2);color:#fff;}
+.cat-crumb{font-family:var(--fm);font-size:10px;color:var(--cyan);letter-spacing:.03em;padding:6px 10px;background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.18);border-radius:6px;line-height:1.6;}
+
+/* Quantity & price */
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.lp-input-wrap{position:relative;}
+.lp-input-prefix{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--slate);font-size:14px;font-weight:600;pointer-events:none;}
+.lp-input-prefix ~ .lp-input{padding-left:24px;}
+
+/* Generate button */
+.gen-btn{width:100%;padding:14px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--blue3));color:#fff;border:none;cursor:pointer;font-family:var(--f);font-size:15px;font-weight:700;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 4px 24px var(--glow);margin-top:8px;}
+.gen-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 36px var(--glow);}
+.gen-btn:disabled{opacity:.45;cursor:not-allowed;}
+.gen-spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite;display:none;}
+@keyframes sp{to{transform:rotate(360deg)}}
+.gen-btn.loading .gen-spin{display:block;}
+.gen-btn.loading .gen-lbl{display:none;}
+
+/* ─── RIGHT PANEL ─── */
+.right-panel{padding:28px;overflow-y:auto;max-height:calc(100vh - 60px);}
+.rp-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;gap:16px;opacity:.35;}
+.rp-empty svg{opacity:.5;}
+.rp-empty p{font-family:var(--fm);font-size:13px;color:var(--slate2);text-align:center;line-height:1.7;}
+
+/* Output field */
+.out-section{margin-bottom:20px;}
+.out-field{background:var(--navy2);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .2s;}
+.out-field:hover{border-color:rgba(255,255,255,.12);}
+.of-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.02);}
+.of-label{font-family:var(--fm);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);display:flex;align-items:center;gap:6px;}
+.of-label-dot{width:6px;height:6px;border-radius:50%;background:var(--blue3);}
+.of-actions{display:flex;gap:6px;}
+.of-btn{display:flex;align-items:center;gap:5px;font-family:var(--fm);font-size:10px;color:var(--slate2);background:rgba(255,255,255,.04);border:1px solid var(--border);padding:4px 9px;border-radius:6px;cursor:pointer;transition:all .2s;letter-spacing:.03em;}
+.of-btn:hover{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.15);}
+.of-btn.regen{color:var(--cyan);}
+.of-btn.regen:hover{background:rgba(6,182,212,.1);border-color:rgba(6,182,212,.3);}
+.of-btn svg{flex-shrink:0;}
+.of-body{padding:16px;}
+.of-value{font-size:14px;color:#fff;line-height:1.65;min-height:28px;}
+.of-value.editable{background:rgba(255,255,255,.03);border-radius:7px;padding:10px 12px;cursor:text;outline:none;transition:background .2s;}
+.of-value.editable:focus{background:rgba(37,99,235,.07);outline:none;}
+.of-value.title{font-size:16px;font-weight:600;letter-spacing:-.2px;}
+.of-value.price{font-size:28px;font-weight:800;color:var(--green);letter-spacing:-1px;}
+.of-char-count{font-family:var(--fm);font-size:10px;color:var(--slate);margin-top:5px;text-align:right;}
+.of-char-count.warn{color:var(--amber);}
+.of-char-count.over{color:var(--red);}
+
+/* Item specifics grid */
+.specs-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.spec-field{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.spec-key{font-family:var(--fm);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);padding:6px 10px 3px;border-bottom:1px solid var(--border);}
+.spec-val{padding:5px 10px 7px;font-size:13px;color:#fff;outline:none;cursor:text;min-height:28px;}
+.spec-val[contenteditable=true]:focus{background:rgba(37,99,235,.06);}
+.spec-regen{display:flex;align-items:center;justify-content:flex-end;padding:0 8px 6px;}
+.spec-regen-btn{font-family:var(--fm);font-size:9px;color:var(--cyan);background:none;border:none;cursor:pointer;letter-spacing:.04em;opacity:.7;transition:opacity .2s;}
+.spec-regen-btn:hover{opacity:1;}
+
+/* Description */
+.desc-textarea{width:100%;background:transparent;border:none;color:#fff;font-family:var(--f);font-size:14px;line-height:1.75;resize:none;outline:none;min-height:160px;padding:0;}
+
+/* Publish bar */
+.publish-bar{position:sticky;bottom:0;background:rgba(7,13,26,.95);border-top:1px solid var(--border);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;backdrop-filter:blur(20px);margin:0 -28px -28px;flex-wrap:wrap;}
+.pb-status{display:flex;align-items:center;gap:10px;font-family:var(--fm);font-size:11px;color:var(--slate2);}
+.pb-dot{width:8px;height:8px;border-radius:50%;}
+.pb-dot.draft{background:var(--amber);}
+.pb-dot.ready{background:var(--green);box-shadow:0 0 8px var(--green);}
+.pb-dot.publishing{background:var(--blue3);animation:pu 1s ease-in-out infinite;}
+@keyframes pu{0%,100%{opacity:1}50%{opacity:.4}}
+.pb-dot.live{background:var(--green);}
+.pb-actions{display:flex;gap:10px;}
+.pb-save{font-size:13px;font-weight:600;color:var(--slate2);background:rgba(255,255,255,.05);border:1px solid var(--border);padding:9px 18px;border-radius:8px;cursor:pointer;transition:all .2s;}
+.pb-save:hover{color:#fff;border-color:rgba(255,255,255,.2);}
+.pb-pub{font-size:14px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--green),#059669);padding:10px 28px;border-radius:8px;border:none;cursor:pointer;transition:all .2s;box-shadow:0 4px 20px rgba(16,185,129,.35);display:flex;align-items:center;gap:8px;}
+.pb-pub:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 32px rgba(16,185,129,.45);}
+.pb-pub:disabled{opacity:.4;cursor:not-allowed;}
+
+/* Toasts */
+.toast-wrap{position:fixed;bottom:100px;right:24px;display:flex;flex-direction:column;gap:8px;z-index:999;}
+.toast{display:flex;align-items:center;gap:10px;background:var(--navy2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:13px;font-weight:500;box-shadow:0 8px 32px rgba(0,0,0,.4);animation:tIn .3s ease;max-width:320px;}
+@keyframes tIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+.toast.success{border-color:rgba(16,185,129,.3);color:#34d399;}
+.toast.error{border-color:rgba(239,68,68,.3);color:#fca5a5;}
+.toast.info{border-color:rgba(37,99,235,.3);color:var(--blue3);}
+
+/* Loading skeleton */
+.skel{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);background-size:200% 100%;animation:sk 1.4s ease infinite;border-radius:6px;height:18px;margin-bottom:6px;}
+@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* Publish result */
+.pub-result{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:12px;padding:20px 24px;margin-top:20px;display:none;}
+.pub-result.show{display:block;animation:fu .4s ease;}
+@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.pr-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.pr-icon{font-size:24px;}
+.pr-title{font-size:16px;font-weight:700;color:#34d399;}
+.pr-sub{font-size:13px;color:var(--slate2);}
+.pr-link{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:12px;color:var(--cyan);background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);padding:7px 14px;border-radius:7px;text-decoration:none;margin-top:10px;transition:all .2s;}
+.pr-link:hover{background:rgba(6,182,212,.15);}
+
+/* eBay connect button in topbar */
+.tb-ebay-btn{display:flex;align-items:center;gap:6px;font-family:var(--fm);font-size:11px;font-weight:600;color:#fff;background:linear-gradient(135deg,#e53e3e,#c53030);border:none;padding:5px 12px;border-radius:6px;cursor:pointer;transition:all .2s;letter-spacing:.03em;}
+.tb-ebay-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(229,62,62,.4);}
+.tb-ebay-btn.connected{background:linear-gradient(135deg,var(--green),#059669);box-shadow:none;}
+.tb-ebay-btn.connected:hover{box-shadow:0 4px 12px rgba(16,185,129,.4);}
+
+/* eBay connect modal */
+.ebay-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);animation:fadeIn .2s ease;}
+.ebay-modal{background:var(--navy2);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:420px;width:90%;box-shadow:0 24px 80px rgba(0,0,0,.5);animation:slideUp .2s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.ebay-modal-icon{font-size:40px;margin-bottom:16px;text-align:center;}
+.ebay-modal-title{font-size:20px;font-weight:800;color:#fff;margin-bottom:8px;text-align:center;}
+.ebay-modal-sub{font-size:13px;color:var(--slate2);text-align:center;line-height:1.6;margin-bottom:24px;}
+.ebay-modal-btns{display:flex;flex-direction:column;gap:10px;}
+.ebay-connect-btn{width:100%;padding:13px;border-radius:10px;background:linear-gradient(135deg,#e53e3e,#c53030);color:#fff;border:none;cursor:pointer;font-family:var(--f);font-size:14px;font-weight:700;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.ebay-connect-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(229,62,62,.4);}
+.ebay-modal-cancel{width:100%;padding:11px;border-radius:10px;background:none;color:var(--slate2);border:1px solid var(--border);cursor:pointer;font-family:var(--f);font-size:13px;font-weight:600;transition:all .2s;}
+.ebay-modal-cancel:hover{color:#fff;border-color:rgba(255,255,255,.2);}
+
+/* Responsive */
+@media(max-width:1000px){
+  .app{grid-template-columns:1fr;}
+  .left-panel{max-height:none;position:static;}
+  .right-panel{max-height:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="index.html" class="tb-logo">
+    <div class="tb-logo-icon">e</div>
+    <span class="tb-logo-text"><span style="color:#3665F3;">List</span><span style="color:#fff;">AI</span></span>
+  </a>
+  <div class="tb-center">
+    <div class="tb-step done" id="step1"><div class="tb-step-num">✓</div> Input</div>
+    <div class="tb-sep">›</div>
+    <div class="tb-step active" id="step2"><div class="tb-step-num">2</div> Generate</div>
+    <div class="tb-sep">›</div>
+    <div class="tb-step" id="step3"><div class="tb-step-num">3</div> Review</div>
+    <div class="tb-sep">›</div>
+    <div class="tb-step" id="step4"><div class="tb-step-num">4</div> Publish</div>
+  </div>
+  <div class="tb-right">
+    <span class="tb-quota">Listings: <span id="quota-used">0</span>/<span id="quota-total">5</span></span>
+    <button class="tb-ebay-btn" id="tb-ebay-btn" onclick="handleEbayConnect()">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span id="tb-ebay-label">Connect eBay</span>
+    </button>
+    <span class="tb-user" id="tb-user-name">Loading...</span>
+    <button class="tb-logout" onclick="logout()">Sign out</button>
+  </div>
+</div>
+
+<div class="app">
+
+  <!-- ─── LEFT PANEL ─── -->
+  <div class="left-panel">
+
+    <!-- Input mode -->
+    <div class="lp-section">
+      <div class="lp-label">Input mode</div>
+      <div class="mode-tabs">
+        <button class="mode-tab active" id="mt-title" onclick="setMode('title')">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h8M2 12h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Title
+        </button>
+        <button class="mode-tab" id="mt-csv" onclick="setMode('csv')">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 8h6M5 5h6M5 11h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>CSV
+        </button>
+        <button class="mode-tab" id="mt-image" onclick="setMode('image')">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="5.5" cy="6.5" r="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M1 11l4-3 3 3 2-2 5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Image
+        </button>
+      </div>
+    </div>
+
+    <!-- Title input -->
+    <div class="lp-section" id="mode-title">
+      <div class="lp-label">Product title or description <span class="lp-label-req">*</span></div>
+      <input type="text" class="lp-input" id="inp-title" placeholder="e.g. Sony WH-1000XM5 Wireless Headphones Black" />
+    </div>
+
+    <!-- CSV input -->
+    <div class="lp-section" id="mode-csv" style="display:none;">
+      <div class="lp-label">Upload CSV spreadsheet</div>
+      <div class="img-upload-zone" id="csv-zone" onclick="document.getElementById('csv-file').click()">
+        <input type="file" id="csv-file" accept=".csv,.xlsx" style="display:none" onchange="handleCSV(this)">
+        <div class="iuz-icon">📊</div>
+        <div class="iuz-text"><strong>Click to upload CSV</strong></div>
+        <div class="iuz-sub">Columns: title, condition, sku, quantity, price (any headers)</div>
+      </div>
+      <div id="csv-rows" style="margin-top:10px;display:none;">
+        <div style="font-family:var(--fm);font-size:11px;color:var(--green);margin-bottom:8px;" id="csv-count"></div>
+        <select class="lp-input" id="csv-row-sel" onchange="selectCSVRow(this.value)" style="padding:8px 12px;font-size:13px;"></select>
+      </div>
+    </div>
+
+    <!-- Image upload -->
+    <div class="lp-section" id="mode-image" style="display:none;">
+      <div class="lp-label">Product images <span style="font-family:var(--fm);font-size:9px;color:var(--slate);letter-spacing:.04em;">(also added to eBay listing)</span></div>
+      <div class="img-upload-zone" id="img-zone">
+        <input type="file" id="img-files" accept="image/*" multiple onchange="handleImages(this)">
+        <div class="iuz-icon">🖼️</div>
+        <div class="iuz-text"><strong>Click or drag images here</strong><br>AI reads product from photos</div>
+        <div class="iuz-sub">JPG · PNG · WEBP · up to 12 images</div>
+      </div>
+      <div class="img-preview-grid" id="img-preview"></div>
+    </div>
+
+    <!-- Product images (always visible after title/csv mode too) -->
+    <div class="lp-section" id="extra-images-section" style="display:none;">
+      <div class="lp-label">Product images <span style="font-family:var(--fm);font-size:9px;color:var(--slate);">optional — added to eBay listing</span></div>
+      <div class="img-upload-zone" id="extra-img-zone">
+        <input type="file" id="extra-img-files" accept="image/*" multiple onchange="handleExtraImages(this)">
+        <div class="iuz-icon">📷</div>
+        <div class="iuz-text"><strong>Add product photos</strong></div>
+        <div class="iuz-sub">Up to 12 images · JPG PNG WEBP</div>
+      </div>
+      <div class="img-preview-grid" id="extra-img-preview"></div>
+    </div>
+
+    <!-- Condition -->
+    <div class="lp-section">
+      <div class="lp-label">Condition <span class="lp-label-req">*</span></div>
+      <div class="cond-grid" id="cond-grid">
+        <button class="cond-btn" onclick="setCond('New')">New</button>
+        <button class="cond-btn" onclick="setCond('Like New')">Like New</button>
+        <button class="cond-btn sel" onclick="setCond('Very Good')">Very Good</button>
+        <button class="cond-btn" onclick="setCond('Good')">Good</button>
+        <button class="cond-btn" onclick="setCond('Acceptable')">Acceptable</button>
+        <button class="cond-btn" onclick="setCond('For parts')">For parts</button>
+      </div>
+    </div>
+
+    <!-- eBay Category cascade -->
+    <div class="lp-section">
+      <div class="lp-label">eBay Category <span class="lp-label-req">*</span></div>
+      <div class="cat-cascade" id="cat-cascade">
+        <select class="cat-select" id="cat-l1" onchange="onCatL1()">
+          <option value="">— Select main category —</option>
+          <option value="Antiques">Antiques</option>
+          <option value="Art">Art</option>
+          <option value="Baby">Baby</option>
+          <option value="Books">Books</option>
+          <option value="Business & Industrial">Business &amp; Industrial</option>
+          <option value="Cameras & Photo">Cameras &amp; Photo</option>
+          <option value="Cell Phones & Accessories">Cell Phones &amp; Accessories</option>
+          <option value="Clothing, Shoes & Accessories">Clothing, Shoes &amp; Accessories</option>
+          <option value="Coins & Paper Money">Coins &amp; Paper Money</option>
+          <option value="Collectibles">Collectibles</option>
+          <option value="Computers/Tablets & Networking">Computers/Tablets &amp; Networking</option>
+          <option value="Consumer Electronics">Consumer Electronics</option>
+          <option value="Crafts">Crafts</option>
+          <option value="DVDs & Movies">DVDs &amp; Movies</option>
+          <option value="Dolls & Bears">Dolls &amp; Bears</option>
+          <option value="Entertainment Memorabilia">Entertainment Memorabilia</option>
+          <option value="Gift Cards & Coupons">Gift Cards &amp; Coupons</option>
+          <option value="Health & Beauty">Health &amp; Beauty</option>
+          <option value="Home & Garden">Home &amp; Garden</option>
+          <option value="Jewelry & Watches">Jewelry &amp; Watches</option>
+          <option value="Music">Music</option>
+          <option value="Musical Instruments & Gear">Musical Instruments &amp; Gear</option>
+          <option value="Pet Supplies">Pet Supplies</option>
+          <option value="Pottery & Glass">Pottery &amp; Glass</option>
+          <option value="Real Estate">Real Estate</option>
+          <option value="Specialty Services">Specialty Services</option>
+          <option value="Sporting Goods">Sporting Goods</option>
+          <option value="Sports Mem, Cards & Fan Shop">Sports Mem, Cards &amp; Fan Shop</option>
+          <option value="Stamps">Stamps</option>
+          <option value="Tickets & Experiences">Tickets &amp; Experiences</option>
+          <option value="Toys & Hobbies">Toys &amp; Hobbies</option>
+          <option value="Travel">Travel</option>
+          <option value="Video Games & Consoles">Video Games &amp; Consoles</option>
+          <option value="Everything Else">Everything Else</option>
+        </select>
+        <select class="cat-select" id="cat-l2" onchange="onCatL2()" style="display:none;"></select>
+        <select class="cat-select" id="cat-l3" onchange="onCatL3()" style="display:none;"></select>
+        <div class="cat-crumb" id="cat-crumb" style="display:none;"></div>
+      </div>
+    </div>
+
+    <!-- Price & Qty -->
+    <div class="lp-section">
+      <div class="row-2">
+        <div>
+          <div class="lp-label">Your Price (USD)</div>
+          <div class="lp-input-wrap">
+            <span class="lp-input-prefix">$</span>
+            <input type="number" class="lp-input" id="inp-price" placeholder="0.00" step="0.01" min="0" />
+          </div>
+        </div>
+        <div>
+          <div class="lp-label">Quantity</div>
+          <input type="number" class="lp-input" id="inp-qty" value="1" min="1" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Extra notes -->
+    <div class="lp-section">
+      <div class="lp-label">Extra notes for AI <span style="font-family:var(--fm);font-size:9px;color:var(--slate);">optional</span></div>
+      <textarea class="lp-input" id="inp-notes" placeholder="e.g. Missing charger, slight scratch on corner, original box included..." rows="3"></textarea>
+    </div>
+
+    <button class="gen-btn" id="gen-btn" onclick="generate()">
+      <div class="gen-spin"></div>
+      <span class="gen-lbl">✦ Generate listing with AI</span>
+    </button>
+    <div style="font-family:var(--fm);font-size:10px;color:var(--slate);text-align:center;margin-top:8px;letter-spacing:.03em;">Powered by Groq AI (Llama 3.1 70B) · Free</div>
+
+  </div><!-- /left-panel -->
+
+  <!-- ─── RIGHT PANEL ─── -->
+  <div class="right-panel" id="right-panel">
+
+    <!-- Empty state -->
+    <div class="rp-empty" id="rp-empty">
+      <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect x="8" y="12" width="48" height="40" rx="6" stroke="rgba(255,255,255,0.2)" stroke-width="2"/><path d="M16 24h32M16 32h22M16 40h14" stroke="rgba(255,255,255,0.2)" stroke-width="2" stroke-linecap="round"/><circle cx="50" cy="14" r="8" fill="rgba(37,99,235,0.3)" stroke="rgba(37,99,235,0.5)" stroke-width="1.5"/><path d="M47 14l2 2 4-4" stroke="rgba(99,179,237,0.8)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <p>Fill in the product details on the left<br>and click <strong style="color:rgba(255,255,255,.6);">Generate listing with AI</strong><br>to see your eBay listing here.</p>
+    </div>
+
+    <!-- Output (hidden until generated) -->
+    <div id="rp-output" style="display:none;">
+
+      <!-- Title -->
+      <div class="out-section">
+        <div class="out-field">
+          <div class="of-header">
+            <div class="of-label"><div class="of-label-dot"></div>eBay Title</div>
+            <div class="of-actions">
+              <button class="of-btn regen" onclick="regenField('title')" title="Regenerate title">
+                <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M13.5 4A6 6 0 1 0 14 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M14 4l-1.5 1.5L11 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Regenerate
+              </button>
+              <button class="of-btn" onclick="copyField('title')">
+                <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M11 5V4a2 2 0 00-2-2H4a2 2 0 00-2 2v5a2 2 0 002 2h1" stroke="currentColor" stroke-width="1.3"/></svg>
+                Copy
+              </button>
+            </div>
+          </div>
+          <div class="of-body">
+            <div class="of-value title editable" id="out-title" contenteditable="true" oninput="updateCharCount('title',this.textContent,80)"></div>
+            <div class="of-char-count" id="cc-title">0 / 80 characters</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category + Condition row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;">
+        <div class="out-field">
+          <div class="of-header">
+            <div class="of-label"><div class="of-label-dot" style="background:var(--cyan);"></div>Category</div>
+            <div class="of-actions">
+              <button class="of-btn regen" onclick="regenField('category')">
+                <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M13.5 4A6 6 0 1 0 14 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M14 4l-1.5 1.5L11 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Regenerate
+              </button>
+            </div>
+          </div>
+          <div class="of-body">
+            <div class="of-value" id="out-category" style="font-size:13px;color:var(--cyan);"></div>
+          </div>
+        </div>
+        <div class="out-field">
+          <div class="of-header">
+            <div class="of-label"><div class="of-label-dot" style="background:var(--amber);"></div>Price</div>
+            <div class="of-actions">
+              <button class="of-btn regen" onclick="regenField('price')">
+                <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M13.5 4A6 6 0 1 0 14 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M14 4l-1.5 1.5L11 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Suggest price
+              </button>
+            </div>
+          </div>
+          <div class="of-body">
+            <div class="of-value price editable" id="out-price" contenteditable="true"></div>
+            <div style="font-family:var(--fm);font-size:10px;color:var(--slate);margin-top:4px;" id="out-price-range"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="out-section">
+        <div class="out-field">
+          <div class="of-header">
+            <div class="of-label"><div class="of-label-dot" style="background:var(--purple);"></div>Description</div>
+            <div class="of-actions">
+              <button class="of-btn regen" onclick="regenField('description')">
+                <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M13.5 4A6 6 0 1 0 14 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M14 4l-1.5 1.5L11 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Regenerate
+              </button>
+              <button class="of-btn" onclick="copyField('description')">
+                <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M11 5V4a2 2 0 00-2-2H4a2 2 0 00-2 2v5a2 2 0 002 2h1" stroke="currentColor" stroke-width="1.3"/></svg>
+                Copy
+              </button>
+              <button class="of-btn" onclick="expandDesc()" id="desc-expand-btn">
+                <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Expand
+              </button>
+            </div>
+          </div>
+          <div class="of-body">
+            <textarea class="desc-textarea" id="out-desc" rows="6"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item Specifics -->
+      <div class="out-section">
+        <div class="out-field">
+          <div class="of-header">
+            <div class="of-label"><div class="of-label-dot" style="background:var(--green);"></div>Item Specifics</div>
+            <div class="of-actions">
+              <button class="of-btn regen" onclick="regenField('specifics')">
+                <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M13.5 4A6 6 0 1 0 14 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M14 4l-1.5 1.5L11 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Regenerate all
+              </button>
+              <button class="of-btn" onclick="addSpecific()">+ Add field</button>
+            </div>
+          </div>
+          <div class="of-body">
+            <div class="specs-grid" id="out-specifics"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Images attached -->
+      <div class="out-section" id="out-images-section" style="display:none;">
+        <div class="out-field">
+          <div class="of-header">
+            <div class="of-label"><div class="of-label-dot" style="background:var(--amber);"></div>Product Images</div>
+            <div class="of-actions">
+              <button class="of-btn" onclick="document.getElementById('more-imgs').click()">+ Add more</button>
+              <input type="file" id="more-imgs" accept="image/*" multiple style="display:none" onchange="handleMoreImages(this)">
+            </div>
+          </div>
+          <div class="of-body">
+            <div style="font-family:var(--fm);font-size:11px;color:var(--slate);margin-bottom:10px;">First image is the main listing photo. Drag to reorder.</div>
+            <div class="img-preview-grid" id="out-img-grid"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shipping & Returns note -->
+      <div class="out-section">
+        <div class="out-field">
+          <div class="of-header">
+            <div class="of-label"><div class="of-label-dot" style="background:var(--slate2);"></div>Shipping &amp; Returns</div>
+          </div>
+          <div class="of-body" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div>
+              <div style="font-family:var(--fm);font-size:10px;color:var(--slate);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Shipping</div>
+              <select class="cat-select" id="out-shipping" style="font-size:12px;padding:7px 10px;">
+                <option value="USPSPriority">USPS Priority Mail (free)</option>
+                <option value="USPSFirstClass">USPS First Class</option>
+                <option value="UPSGround">UPS Ground</option>
+                <option value="FedExGround">FedEx Ground</option>
+                <option value="LocalPickup">Local Pickup Only</option>
+                <option value="Calculated">Calculated (by buyer ZIP)</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-family:var(--fm);font-size:10px;color:var(--slate);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Returns</div>
+              <select class="cat-select" id="out-returns" style="font-size:12px;padding:7px 10px;">
+                <option value="30">30-day returns accepted</option>
+                <option value="60">60-day returns accepted</option>
+                <option value="14">14-day returns accepted</option>
+                <option value="none">No returns</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Publish result -->
+      <div class="pub-result" id="pub-result">
+        <div class="pr-head">
+          <span class="pr-icon">🎉</span>
+          <div>
+            <div class="pr-title">Listing live on eBay!</div>
+            <div class="pr-sub">Your item is now visible to millions of buyers.</div>
+          </div>
+        </div>
+        <a href="#" class="pr-link" id="pr-link" target="_blank">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M7 3H3a1 1 0 00-1 1v9a1 1 0 001 1h9a1 1 0 001-1V9M9 1h6m0 0v6m0-6L7 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          View listing on eBay
+        </a>
+      </div>
+
+    </div><!-- /rp-output -->
+
+    <!-- Publish bar -->
+    <div class="publish-bar" id="publish-bar" style="display:none;">
+      <div class="pb-status">
+        <div class="pb-dot draft" id="pb-dot"></div>
+        <span id="pb-status-text">Draft — review before publishing</span>
+      </div>
+      <div class="pb-actions">
+        <button class="pb-save" onclick="saveDraft()">Save draft</button>
+        <button class="pb-pub" id="pb-pub-btn" onclick="publishListing()">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1v10M4 7l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 13h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Publish to eBay
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /right-panel -->
+</div><!-- /app -->
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+const API = "https://listai-api.onrender.com"; // ← Update after Render deploy
+// While testing locally: const API = "http://localhost:8000";
+
+// ── State ─────────────────────────────────────────────────────
+let state = {
+  mode: 'title',
+  condition: 'Very Good',
+  category: '',
+  categoryPath: '',
+  categoryId: '',
+  images: [],           // File objects for upload
+  imagePreviews: [],    // data URLs for preview
+  csvRows: [],
+  csvRowIndex: 0,
+  generated: null,      // Last AI response
+  listingId: null,
+};
+
+// ── Auth guard ────────────────────────────────────────────────
+const token = localStorage.getItem('listai_token');
+const user  = JSON.parse(localStorage.getItem('listai_user') || '{}');
+
+if (!token) {
+  window.location.href = 'index.html';
+}
+
+document.getElementById('tb-user-name').textContent = user.name || user.email || '';
+document.getElementById('quota-used').textContent  = user.listings_used  || 0;
+document.getElementById('quota-total').textContent = user.listings_quota || 5;
+
+function logout() {
+  localStorage.removeItem('listai_token');
+  localStorage.removeItem('listai_user');
+  window.location.href = 'index.html';
+}
+
+// ── Mode switching ────────────────────────────────────────────
+function setMode(m) {
+  state.mode = m;
+  ['title','csv','image'].forEach(x => {
+    document.getElementById(`mode-${x}`).style.display = x === m ? '' : 'none';
+    document.getElementById(`mt-${x}`).classList.toggle('active', x === m);
+  });
+  // Show extra image upload for title/csv modes
+  document.getElementById('extra-images-section').style.display = m === 'image' ? 'none' : '';
+}
+// init
+setMode('title');
+
+// ── Condition ─────────────────────────────────────────────────
+function setCond(c) {
+  state.condition = c;
+  document.querySelectorAll('.cond-btn').forEach(b => b.classList.toggle('sel', b.textContent === c));
+}
+
+// ── Image handling ────────────────────────────────────────────
+function handleImages(input) { addImages(input.files, 'img-preview'); }
+function handleExtraImages(input) { addImages(input.files, 'extra-img-preview'); }
+function handleMoreImages(input) { addImages(input.files, 'out-img-grid'); }
+
+function addImages(files, previewId) {
+  const preview = document.getElementById(previewId);
+  Array.from(files).slice(0, 12 - state.images.length).forEach((file, idx) => {
+    state.images.push(file);
+    const reader = new FileReader();
+    reader.onload = e => {
+      state.imagePreviews.push(e.target.result);
+      const div = document.createElement('div');
+      div.className = 'img-thumb' + (state.images.length === 1 ? ' primary' : '');
+      div.dataset.idx = state.images.length - 1;
+      div.innerHTML = `<img src="${e.target.result}"><button class="img-thumb-rm" onclick="removeImage(${state.images.length-1},'${previewId}')">✕</button>`;
+      preview.appendChild(div);
+      // Show images section in output if visible
+      if (document.getElementById('rp-output').style.display !== 'none') {
+        renderOutputImages();
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function removeImage(idx, previewId) {
+  state.images.splice(idx, 1);
+  state.imagePreviews.splice(idx, 1);
+  renderPreviewGrid(previewId);
+  renderOutputImages();
+}
+
+function renderPreviewGrid(previewId) {
+  const preview = document.getElementById(previewId);
+  preview.innerHTML = '';
+  state.imagePreviews.forEach((src, i) => {
+    const div = document.createElement('div');
+    div.className = 'img-thumb' + (i === 0 ? ' primary' : '');
+    div.innerHTML = `<img src="${src}"><button class="img-thumb-rm" onclick="removeImage(${i},'${previewId}')">✕</button>`;
+    preview.appendChild(div);
+  });
+}
+
+function renderOutputImages() {
+  const grid = document.getElementById('out-img-grid');
+  const section = document.getElementById('out-images-section');
+  if (state.imagePreviews.length === 0) { section.style.display = 'none'; return; }
+  section.style.display = '';
+  grid.innerHTML = '';
+  state.imagePreviews.forEach((src, i) => {
+    const div = document.createElement('div');
+    div.className = 'img-thumb' + (i === 0 ? ' primary' : '');
+    div.innerHTML = `<img src="${src}"><button class="img-thumb-rm" onclick="removeImage(${i},'out-img-grid')">✕</button>`;
+    grid.appendChild(div);
+  });
+}
+
+// ── CSV handling ──────────────────────────────────────────────
+function handleCSV(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const text = e.target.result;
+    const lines = text.split('\n').filter(l => l.trim());
+    if (lines.length < 2) { toast('CSV must have a header row and at least 1 product.', 'error'); return; }
+    const headers = lines[0].split(',').map(h => h.trim().replace(/"/g,''));
+    state.csvRows = lines.slice(1).map(line => {
+      const vals = line.split(',').map(v => v.trim().replace(/"/g,''));
+      return Object.fromEntries(headers.map((h,i) => [h, vals[i] || '']));
+    });
+    const sel = document.getElementById('csv-row-sel');
+    sel.innerHTML = state.csvRows.map((r,i) => `<option value="${i}">Row ${i+1}: ${r.title||r.name||r.product||Object.values(r)[0]||'—'}</option>`).join('');
+    document.getElementById('csv-count').textContent = `✓ ${state.csvRows.length} products loaded`;
+    document.getElementById('csv-rows').style.display = '';
+  };
+  reader.readAsText(file);
+}
+function selectCSVRow(i) { state.csvRowIndex = parseInt(i); }
+
+// ── Category cascade ──────────────────────────────────────────
+const CAT_L2 = {
+  "Cameras & Photo": ["Camera Drones","Camera Lenses","Camcorders","Digital Cameras","Film Cameras","Film Photography","Flashes & Flash Accessories","Lighting & Studio","Memory Cards & Accessories","Photo Albums","Printers, Scanners & Supplies","Projection Equipment","Telescopes & Binoculars","Tripods & Supports","Video Camera Accessories","Other Cameras & Photo"],
+  "Cell Phones & Accessories": ["Cell Phone Accessories","Cell Phones & Smartphones","Parts & Tools","Prepaid Phones & Plans","Smart Watches","Vintage & Rare Phones","Wholesale Lots"],
+  "Clothing, Shoes & Accessories": ["Baby & Toddler Clothing","Boys' Clothing (Newborn–5T)","Boys' Clothing (Sizes 4 & Up)","Girls' Clothing (Newborn–5T)","Girls' Clothing (Sizes 4 & Up)","Men's Accessories","Men's Clothing","Men's Shoes","Uniforms","Wedding & Formal Occasion","Women's Accessories","Women's Bags & Handbags","Women's Clothing","Women's Shoes","Vintage","Wholesale Lots"],
+  "Computers/Tablets & Networking": ["Computer Cases & Accessories","Computer Components & Parts","Desktops & All-In-Ones","Drives, Storage & Blank Media","Home Networking & Connectivity","Keyboards, Mice & Pointers","Laptop Parts & Accessories","Laptops & Netbooks","Monitors, Projectors & Accs","Networking & Home Office Products","Printers","Scanners","Software","Tablets & eBook Readers","Vintage Computing","Wholesale Lots"],
+  "Consumer Electronics": ["Audio","Car Electronics","Cell Phones & Accessories","Gadgets & Other Electronics","GPS","Home Surveillance","Multipurpose Batteries & Power","Networking","Portable Audio & Headphones","Radios: AM, FM, Shortwave","Satellite, Cable & TV","Telephones & Pagers","TV, Video & Home Audio","Vehicle Electronics & GPS","Video Games & Consoles"],
+  "Health & Beauty": ["Bath & Body","Dietary Supplements, Nutrition & Shakes","Fragrances","Hair Care & Styling","Health Care","Makeup","Medical & Mobility","Mental Health Apps & Services","Natural & Alternative Remedies","Oral Care","Over-the-Counter Medicine","Sexual Wellness","Shaving & Hair Removal","Skin Care","Tattoos & Body Art","Vision Care","Vitamins & Minerals","Weight Management"],
+  "Home & Garden": ["Bath","Bedding","Building & Hardware","Dining & Bar","Electrical & Solar","Food & Beverages","Furniture","Gardening Supplies","Holiday & Seasonal Décor","Housekeeping & Organization","Kitchen","Lamps, Lighting & Ceiling Fans","Major Appliances","Other Appliances","Outdoor Cooking & Eating","Outdoor Power Equipment","Patio & Garden Furniture","Plumbing & Fixtures","Rugs & Carpets","Smart Home","Swimming Pools, Spas & Hot Tubs","Tools","Window Treatments & Hardware","World Décor"],
+  "Jewelry & Watches": ["Body Jewelry","Children's Jewelry","Engagement & Wedding Jewelry","Ethnic & Tribal Jewelry","Fashion Jewelry","Fine Jewelry","Jewelry Design & Repair","Loose Beads","Loose Diamonds & Gemstones","Men's Jewelry","Vintage & Antique Jewelry","Watches, Parts & Accessories","Wholesale & Special Offers"],
+  "Sporting Goods": ["Boxing, Martial Arts & MMA","Camping & Hiking","Cycling","Exercise & Fitness","Fan Shop","Fishing","Golf","Hunting","Outdoor Sports","Team Sports","Tennis & Racquet Sports","Volleyball","Water Sports","Winter Sports"],
+  "Toys & Hobbies": ["Action Figures & Accessories","Baby Toys","Beanbag Plush","Building Toys","Collectible Card Games","Die-Cast & Toy Vehicles","Dolls & Bears","Electronic, Battery & Wind-Up","Fast Food & Cereal Premiums","Games","Models & Kits","Outdoor Toys & Structures","Preschool Toys & Pretend Play","Puzzles","Radio Control & Control Line","Robots & Space Toys","Science & Nature","Slot Cars","Stuffed Animals","Trading Card Games","Vintage & Antique Toys","Wholesale Lots"],
+  "Video Games & Consoles": ["Accessories","Games","Internet & Subscription Gaming","Replacement Parts & Tools","Vintage Gaming","Wholesale Lots"],
+  "Books": ["Antiquarian & Collectible","Audiobooks","Catalogs","Children's & Young Adult","Comics","Fiction","Magazine Back Issues","Magazines","Nonfiction","Textbooks, Education & Reference","Other"],
+  "Music": ["Cassettes","CDs","DVDs & Blu-ray","Digital Downloads","LPs & Vinyl Records","Music Memorabilia","Other Formats"],
+  "Musical Instruments & Gear": ["Bass Guitars","Drums & Percussion","Electronic Sound & Lighting Equipment","Equipment Cases & Bags","Guitar","Karaoke Entertainment","Keyboards & Pianos","Other Instruments","Pro Audio Equipment","Sheet Music & Song Books","Stage Lighting & Effects","Stage & Lighting Accessories","String","Wind & Woodwind"],
+  "Antiques": ["Antiquities","Asian Antiques","Architectural & Garden Antiques","Decorative Arts","Ethnographic","Furniture","Maps, Atlases & Globes","Maritime Antiques","Periods & Styles","Primitives","Reproduction Antiques","Rugs & Carpets","Science & Medicine","Sewing","Silver","Textiles","Tools, Hardware & Locks","Woodenware"],
+  "Art": ["Digital Arts","Drawings","Folk Art & Primitives","Mixed Media Art & Collage","Paintings","Photographic Images","Posters","Prints","Sculpture","Self-Representing Artists"],
+  "Collectibles": ["Advertising","Animals","Animation Art & Characters","Autographs","Banks, Registers & Vending","Barware","Bears","Bottles & Insulators","Breweriana, Beer","Casino","Clocks","Comics","Decorative Collectibles","Disneyana","Fantasy, Mythical & Magic","Flags, Banners & Pennants","Fraternal Organizations","Holiday & Seasonal","Historical Memorabilia","Housewares & Kitchenware","Knives, Swords & Blades","Lamps, Lighting","Linens & Textiles","Metalware","Militaria","Pens & Writing Instruments","Pinbacks, Nodders & Lunchboxes","Postcards & Paper","Radio, Phonograph, TV, Phone","Rocks, Fossils & Minerals","Science & Nature","Sports Memorabilia","Tobacciana","Tools & Primitives","Vanity, Perfume & Shaving","Vintage Sewing","Vintage Clothing & Accessories"],
+  "Pet Supplies": ["Bird Supplies","Cat Supplies","Dog Supplies","Fish & Aquariums","Large & Small Animals","Reptile Supplies","Other Animals"],
+  "Baby": ["Baby Clothing","Baby Furniture","Baby Gear","Baby Monitors","Diapering","Feeding","Health & Safety","Nursery Décor","Potty Training","Safety Equipment","Strollers & Accessories","Toys for Baby"],
+  "Business & Industrial": ["Agriculture & Forestry","Construction","Electrical Equipment & Supplies","Facility Maintenance & Safety","Food Service","Healthcare, Lab & Life Science","Heavy Equipment, Parts & Attachments","Industrial Automation & Motion Controls","Light Equipment & Tools","Manufacturing & Metalworking","Office Products & Supplies","Other Industries","Packing & Shipping","Printing & Graphic Arts","Restaurant & Food Service","Retail & Services","Test, Measurement & Inspection"],
+  "DVDs & Movies": ["Blu-ray Discs","DVDs","VHS","Film Memorabilia"],
+  "Everything Else": ["Education & Learning","Adult Only","Careers & Employment","Contests","Genealogy","Gift Certificates","Information Products","Memberships","Personal Development","Relationships","Religion & Spirituality","Test & Measurement","Weird Stuff","Writing & Editing"],
+};
+
+const CAT_L3 = {
+  "Portable Audio & Headphones": ["Headphone Accessories","Headphones","MP3 Player Accessories","MP3 Players","Portable CD Players","Portable Cassette Players","Portable Radios & Speakers","Satellite Radios","iPod, Audio Player Accessories"],
+  "Cell Phones & Smartphones": ["Apple iPhones","Samsung Phones","Google Phones","Motorola Phones","OnePlus Phones","Sony Phones","Other Cell Phones"],
+  "Laptops & Netbooks": ["Apple Laptops","HP Laptops","Dell Laptops","Lenovo ThinkPad","Asus Laptops","Acer Laptops","MSI Laptops","Samsung Laptops","Toshiba Laptops","2-in-1 Laptops"],
+  "Men's Clothing": ["Activewear","Coats & Jackets","Dress Shirts","Hoodies & Sweatshirts","Jeans","Pants","Shorts","Sleepwear & Robes","Socks","Suits & Suit Separates","Sweaters","T-Shirts","Underwear"],
+  "Women's Clothing": ["Activewear","Blouses & Shirts","Coats & Jackets","Dresses","Hoodies & Sweatshirts","Jeans","Jumpers & Rompers","Leggings","Pants","Shorts","Skirts","Sleepwear","Suits & Blazers","Sweaters","Swimwear"],
+  "Men's Shoes": ["Athletic Shoes","Boots","Dress Shoes","Flip Flops & Sandals","Loafers & Slip-Ons","Slippers","Sneakers"],
+  "Women's Shoes": ["Athletic Shoes","Boots","Flats","Heels","Mules & Clogs","Sandals","Slippers","Sneakers","Wedges"],
+  "Fine Jewelry": ["Body Jewelry","Bracelets","Brooches & Pins","Charms & Charm Bracelets","Earrings","Necklaces & Pendants","Rings","Sets"],
+  "Watches, Parts & Accessories": ["Wristwatches","Pocket Watches","Parts, Tools & Guides","Watch Bands","Watch Boxes","Wholesale Lots"],
+  "Golf": ["Bags, Carts & Accessories","Balls","Clothing, Shoes & Accessories","Clubs","Putters","Training Aids","Wedges & Chippers","Woods"],
+  "Cycling": ["Bike Frames","Bike Parts","BMX Bikes","Children's Bikes","Clothing","Electric Bikes","Mountain Bikes","Road Bikes"],
+  "Exercise & Fitness": ["Cardio Equipment","Resistance Training","Yoga & Pilates","Strength Training","Home Gyms","Wearable Technology"],
+  "Action Figures & Accessories": ["Action Figures","Playsets","Vehicles"],
+  "Building Toys": ["LEGO Sets","LEGO Parts & Packs","DUPLO","Mega Bloks","Other Building Sets"],
+};
+
+function onCatL1() {
+  const l1 = document.getElementById('cat-l1').value;
+  const l2El = document.getElementById('cat-l2');
+  const l3El = document.getElementById('cat-l3');
+  l3El.style.display = 'none';
+  if (!l1) { l2El.style.display='none'; updateCatCrumb(); return; }
+  const subs = CAT_L2[l1] || [];
+  if (subs.length === 0) {
+    l2El.style.display = 'none';
+    state.category = l1; state.categoryPath = l1; state.categoryId = '';
+    updateCatCrumb();
+    return;
+  }
+  l2El.innerHTML = `<option value="">— Select subcategory —</option>` + subs.map(s=>`<option value="${s}">${s}</option>`).join('');
+  l2El.style.display = '';
+  state.category = l1; state.categoryPath = l1; state.categoryId = '';
+  updateCatCrumb();
+}
+
+function onCatL2() {
+  const l1 = document.getElementById('cat-l1').value;
+  const l2 = document.getElementById('cat-l2').value;
+  const l3El = document.getElementById('cat-l3');
+  if (!l2) { l3El.style.display='none'; state.categoryPath = l1; updateCatCrumb(); return; }
+  const subs = CAT_L3[l2] || [];
+  if (subs.length > 0) {
+    l3El.innerHTML = `<option value="">— Select subcategory —</option>` + subs.map(s=>`<option value="${s}">${s}</option>`).join('');
+    l3El.style.display = '';
+  } else { l3El.style.display='none'; }
+  state.category = l2; state.categoryPath = `${l1} > ${l2}`; state.categoryId = '';
+  updateCatCrumb();
+}
+
+function onCatL3() {
+  const l1 = document.getElementById('cat-l1').value;
+  const l2 = document.getElementById('cat-l2').value;
+  const l3 = document.getElementById('cat-l3').value;
+  if (!l3) return;
+  state.category = l3; state.categoryPath = `${l1} > ${l2} > ${l3}`; state.categoryId = '';
+  updateCatCrumb();
+}
+
+function updateCatCrumb() {
+  const crumb = document.getElementById('cat-crumb');
+  if (state.categoryPath) {
+    crumb.textContent = state.categoryPath;
+    crumb.style.display = '';
+  } else {
+    crumb.style.display = 'none';
+  }
+}
+
+// ── Category-specific item specifics ─────────────────────────
+const CATEGORY_SPECIFICS = {
+  default: ["Brand","Model","MPN","Color","Size","Material","Condition","Country of Manufacture"],
+  "Cell Phones & Smartphones": ["Brand","Model","Storage Capacity","RAM","Color","Operating System","Network","Carrier","SIM Card Size","Screen Size","MPN","IMEI","Processor","Battery Capacity","Camera Resolution"],
+  "Apple iPhones": ["Model","Storage Capacity","Color","Carrier","Network","SIM Card Size","Battery Health","Face ID","Touch ID","MPN"],
+  "Laptops & Netbooks": ["Brand","Model","Processor","Processor Speed","RAM","Hard Drive Size","Hard Drive Type","Screen Size","Operating System","Graphics Card","Battery Life","Color","MPN"],
+  "Men's Clothing": ["Brand","Size Type","Size","Department","Material","Color","Style","Pattern","Fit","Neckline","Sleeve Length","Country of Manufacture"],
+  "Women's Clothing": ["Brand","Size Type","Size","Department","Material","Color","Style","Pattern","Fit","Neckline","Sleeve Length","Country of Manufacture"],
+  "Men's Shoes": ["Brand","US Shoe Size","UK Shoe Size","EU Shoe Size","Shoe Width","Color","Upper Material","Sole Material","Style","Department","Product Line","MPN"],
+  "Women's Shoes": ["Brand","US Shoe Size","UK Shoe Size","EU Shoe Size","Heel Height","Heel Type","Color","Upper Material","Sole Material","Style","Toe Style","Department"],
+  "Fine Jewelry": ["Metal","Metal Purity","Main Stone","Main Stone Color","Main Stone Shape","Main Stone Creation","Jewelry Theme","Style","Closure","Ring Size","Chain Length","Weight"],
+  "Watches, Parts & Accessories": ["Brand","Model","Reference Number","Case Material","Band Material","Band Color","Dial Color","Case Size","Movement","Water Resistance","Year Manufactured","Features","Complications","Department"],
+  "Golf": ["Brand","Club Type","Golf Club Set","Shaft Material","Shaft Flex","Grip Size","Hand Orientation","Lie Angle","Loft","Club Size","Head Cover Included","MPN"],
+  "Building Toys": ["Brand","Theme","Set Name","Set Number","Number of Pieces","Recommended Age","Sub-Theme","Year Released","Condition","Packaging"],
+  "Portable Audio & Headphones": ["Brand","Model","Type","Connectivity","Color","Compatibility","Noise Cancelling","Battery Life","Frequency Response","Driver Size","Impedance","MPN"],
+  "Action Figures & Accessories": ["Brand","Character","Line","Series","Franchise","Year","Scale","Material","Includes","Features","Age Range","MPN"],
+  "Exercise & Fitness": ["Brand","Type","Color","Material","Weight Capacity","Height Range","Resistance Levels","Assembly Required","Model","MPN"],
+  "Cycling": ["Brand","Type","Frame Size","Frame Material","Wheel Size","Number of Speeds","Color","Brake Type","Drivetrain","Gender","Age Group","MPN"],
+  "Cameras & Photo": ["Brand","Model","Type","Megapixels","Sensor Size","Lens Mount","Includes","Connectivity","Video Resolution","Shutter Speed Range","Shutter Count","MPN"],
+  "Digital Cameras": ["Brand","Model","Megapixels","Optical Zoom","Sensor Type","Screen Size","Connectivity","Video Capability","Battery Included","Memory Card Type","Color","MPN"],
+  "Guitar": ["Brand","Type","Body Type","Body Color","Body Material","Number of Strings","Neck Material","Fingerboard Material","Scale Length","Right / Left Handed","Country of Manufacture","MPN"],
+  "Books": ["Format","Subject","Author","Publisher","Language","Publication Year","ISBN","Edition","Signed","Inscribed"],
+  "Video Games & Consoles": ["Platform","Game Name","Region Code","Rating","Genre","Publisher","Release Year","Multiplayer","Online Capabilities","Language","MPN"],
+};
+
+function getSpecificsForCategory(cat) {
+  if (!cat) return CATEGORY_SPECIFICS.default;
+  const direct = CATEGORY_SPECIFICS[cat];
+  if (direct) return direct;
+  // Try partial match
+  for (const [key, specs] of Object.entries(CATEGORY_SPECIFICS)) {
+    if (cat.toLowerCase().includes(key.toLowerCase()) || key.toLowerCase().includes(cat.toLowerCase())) {
+      return specs;
+    }
+  }
+  return CATEGORY_SPECIFICS.default;
+}
+
+// ── Generate ──────────────────────────────────────────────────
+async function generate() {
+  let inputText = '';
+  if (state.mode === 'title') {
+    inputText = document.getElementById('inp-title').value.trim();
+    if (!inputText) { toast('Please enter a product title.', 'error'); return; }
+  } else if (state.mode === 'csv') {
+    if (!state.csvRows.length) { toast('Please upload a CSV file first.', 'error'); return; }
+    inputText = JSON.stringify(state.csvRows[state.csvRowIndex]);
+  } else if (state.mode === 'image') {
+    if (!state.images.length) { toast('Please upload at least one product image.', 'error'); return; }
+    inputText = 'Generate from uploaded product image';
+  }
+
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true; btn.classList.add('loading');
+
+  // Show skeleton loading
+  document.getElementById('rp-empty').style.display = 'none';
+  document.getElementById('rp-output').style.display = 'none';
+  showSkeleton();
+
+  try {
+    let payload = {
+      title: state.mode === 'title' ? inputText : '',
+      condition: state.condition,
+      category: state.categoryPath || state.category || '',
+      notes: document.getElementById('inp-notes').value.trim(),
+      user_price: parseFloat(document.getElementById('inp-price').value) || null,
+    };
+
+    if (state.mode === 'csv') {
+      payload = { ...state.csvRows[state.csvRowIndex], ...payload };
+    }
+
+    const r = await fetch(`${API}/listings/generate/title`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ title: inputText, condition: state.condition }),
+    });
+
+    if (!r.ok) {
+      const err = await r.json();
+      throw new Error(err.detail || 'Generation failed');
+    }
+
+    const data = await r.json();
+    state.generated = data;
+    state.listingId = data.id;
+
+    hideSkeleton();
+    renderOutput(data);
+    setStep(3);
+    toast('Listing generated!', 'success');
+
+  } catch (e) {
+    hideSkeleton();
+    document.getElementById('rp-empty').style.display = 'flex';
+    toast(`Error: ${e.message}`, 'error');
+  } finally {
+    btn.disabled = false; btn.classList.remove('loading');
+  }
+}
+
+// ── Render output ─────────────────────────────────────────────
+function renderOutput(data) {
+  const op = document.getElementById('rp-output');
+  op.style.display = '';
+
+  const title = data.final_title || data.ai_title || '';
+  const desc  = data.final_description || data.ai_description || '';
+  const price = data.final_price || data.ai_price || 0;
+  const cat   = data.ai_category || state.categoryPath || '';
+  let specifics = {};
+  try { specifics = JSON.parse(data.final_specifics || data.ai_specifics || '{}'); } catch(e){}
+
+  // Title
+  document.getElementById('out-title').textContent = title;
+  updateCharCount('title', title, 80);
+
+  // Category
+  document.getElementById('out-category').textContent = cat || 'Click to set category';
+
+  // Price
+  document.getElementById('out-price').textContent = `$${Number(price).toFixed(2)}`;
+  if (data.ai_price_min && data.ai_price_max) {
+    document.getElementById('out-price-range').textContent = `Suggested range: $${data.ai_price_min} – $${data.ai_price_max}`;
+  }
+
+  // Description
+  document.getElementById('out-desc').value = desc;
+
+  // Item specifics
+  renderSpecifics(specifics, cat || state.category);
+
+  // Images
+  renderOutputImages();
+
+  // Publish bar
+  document.getElementById('publish-bar').style.display = 'flex';
+}
+
+function renderSpecifics(dataSpecs, category) {
+  const grid = document.getElementById('out-specifics');
+  grid.innerHTML = '';
+  const templateKeys = getSpecificsForCategory(category);
+  const merged = {};
+  templateKeys.forEach(k => merged[k] = dataSpecs[k] || '');
+  Object.entries(dataSpecs).forEach(([k,v]) => { if (!(k in merged)) merged[k] = v; });
+
+  Object.entries(merged).forEach(([key, val]) => {
+    const div = document.createElement('div');
+    div.className = 'spec-field';
+    div.innerHTML = `
+      <div class="spec-key">${key}</div>
+      <div class="spec-val" contenteditable="true" data-key="${key}">${val || ''}</div>
+      <div class="spec-regen">
+        <button class="spec-regen-btn" onclick="regenSpecific('${key}')">↻ regen</button>
+      </div>`;
+    grid.appendChild(div);
+  });
+}
+
+// ── Regen individual fields ───────────────────────────────────
+async function regenField(field) {
+  if (!state.generated) return;
+  const inputText = document.getElementById('inp-title').value.trim()
+    || JSON.stringify(state.csvRows[state.csvRowIndex] || {})
+    || 'product';
+
+  toast(`Regenerating ${field}...`, 'info');
+
+  try {
+    // Call Groq via backend for the specific field
+    const r = await fetch(`${API}/listings/regen-field`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({
+        listing_id: state.listingId,
+        field,
+        product_title: inputText,
+        condition: state.condition,
+        category: state.categoryPath || state.category,
+      }),
+    });
+
+    if (r.ok) {
+      const d = await r.json();
+      if (field === 'title') {
+        document.getElementById('out-title').textContent = d.value;
+        updateCharCount('title', d.value, 80);
+      } else if (field === 'description') {
+        document.getElementById('out-desc').value = d.value;
+      } else if (field === 'price') {
+        document.getElementById('out-price').textContent = `$${Number(d.value).toFixed(2)}`;
+      } else if (field === 'category') {
+        document.getElementById('out-category').textContent = d.value;
+      } else if (field === 'specifics') {
+        try { renderSpecifics(JSON.parse(d.value), state.category); } catch(e){}
+      }
+      toast(`${field.charAt(0).toUpperCase() + field.slice(1)} regenerated!`, 'success');
+    } else {
+      // Fallback: regenerate locally using Groq via demo endpoint
+      regenFieldLocal(field, inputText);
+    }
+  } catch(e) {
+    regenFieldLocal(field, inputText);
+  }
+}
+
+async function regenFieldLocal(field, inputText) {
+  // Fallback: use demo endpoint to get a new full listing and extract the field
+  try {
+    const r = await fetch(`${API}/demo/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: inputText }),
+    });
+    if (!r.ok) return;
+    const d = await r.json();
+    if (field === 'title') {
+      document.getElementById('out-title').textContent = d.title;
+      updateCharCount('title', d.title, 80);
+    } else if (field === 'description') {
+      document.getElementById('out-desc').value = d.description;
+    } else if (field === 'price') {
+      document.getElementById('out-price').textContent = `$${Number(d.price).toFixed(2)}`;
+    } else if (field === 'specifics') {
+      renderSpecifics(d.item_specifics || {}, state.category);
+    }
+    toast(`${field} regenerated!`, 'success');
+  } catch(e) { toast('Regeneration failed.', 'error'); }
+}
+
+async function regenSpecific(key) {
+  toast(`Regenerating ${key}...`, 'info');
+  await new Promise(r => setTimeout(r, 600));
+  const inputText = document.getElementById('inp-title').value.trim() || 'product';
+  const r = await fetch(`${API}/demo/generate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title: inputText }),
+  });
+  if (!r.ok) { toast('Failed to regenerate field.', 'error'); return; }
+  const d = await r.json();
+  const specs = d.item_specifics || {};
+  const el = document.querySelector(`.spec-val[data-key="${key}"]`);
+  if (el && specs[key]) el.textContent = specs[key];
+  toast(`${key} updated!`, 'success');
+}
+
+function addSpecific() {
+  const key = prompt('Field name (e.g. Color, Brand, Size):');
+  if (!key) return;
+  const grid = document.getElementById('out-specifics');
+  const div = document.createElement('div');
+  div.className = 'spec-field';
+  div.innerHTML = `
+    <div class="spec-key">${key}</div>
+    <div class="spec-val" contenteditable="true" data-key="${key}"></div>
+    <div class="spec-regen"><button class="spec-regen-btn" onclick="regenSpecific('${key}')">↻ regen</button></div>`;
+  grid.appendChild(div);
+  div.querySelector('.spec-val').focus();
+}
+
+// ── Publish ───────────────────────────────────────────────────
+async function publishListing() {
+  const btn = document.getElementById('pb-pub-btn');
+  btn.disabled = true;
+  document.getElementById('pb-dot').className = 'pb-dot publishing';
+  document.getElementById('pb-status-text').textContent = 'Publishing to eBay...';
+  setStep(4);
+
+  try {
+    const title = document.getElementById('out-title').textContent;
+    const desc  = document.getElementById('out-desc').value;
+    const price = parseFloat(document.getElementById('out-price').textContent.replace('$','')) || 0;
+    const specifics = {};
+    document.querySelectorAll('.spec-val[data-key]').forEach(el => {
+      if (el.textContent.trim()) specifics[el.dataset.key] = el.textContent.trim();
+    });
+
+    // First update the listing in backend
+    if (state.listingId) {
+      await fetch(`${API}/listings/${state.listingId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({
+          final_title: title,
+          final_description: desc,
+          final_price: price,
+          final_specifics: specifics,
+          final_condition: state.condition,
+          final_category_id: state.categoryId || '99',
+        }),
+      });
+    }
+
+    // Get first eBay account
+    const accsR = await fetch(`${API}/ebay/accounts`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const accsData = await accsR.json();
+    const accounts = accsData.accounts || [];
+
+    if (!accounts.length) {
+      openEbayModal();
+      document.getElementById('pb-dot').className = 'pb-dot draft';
+      document.getElementById('pb-status-text').textContent = 'Draft — connect eBay to publish';
+      btn.disabled = false;
+      return;
+    }
+
+    const r = await fetch(`${API}/listings/publish`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ listing_id: state.listingId, ebay_account_id: accounts[0].id }),
+    });
+
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || 'Publish failed');
+
+    document.getElementById('pb-dot').className = 'pb-dot live';
+    document.getElementById('pb-status-text').textContent = '✓ Live on eBay';
+    const res = document.getElementById('pub-result');
+    if (d.ebay_url) document.getElementById('pr-link').href = d.ebay_url;
+    res.classList.add('show');
+    res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    toast('Listing published to eBay! 🎉', 'success');
+
+  } catch(e) {
+    document.getElementById('pb-dot').className = 'pb-dot draft';
+    document.getElementById('pb-status-text').textContent = 'Publish failed — try again';
+    toast(`Publish failed: ${e.message}`, 'error');
+    btn.disabled = false;
+  }
+}
+
+function saveDraft() {
+  toast('Draft saved', 'info');
+}
+
+// ── Helpers ───────────────────────────────────────────────────
+function updateCharCount(field, text, max) {
+  const len = (text||'').length;
+  const el  = document.getElementById(`cc-${field}`);
+  if (!el) return;
+  el.textContent = `${len} / ${max} characters`;
+  el.className = `of-char-count${len > max ? ' over' : len > max * 0.9 ? ' warn' : ''}`;
+}
+
+function copyField(field) {
+  const el = document.getElementById(`out-${field}`);
+  const text = el ? (el.textContent || el.value || '') : '';
+  navigator.clipboard.writeText(text).then(() => toast('Copied!', 'info'));
+}
+
+function expandDesc() {
+  const ta = document.getElementById('out-desc');
+  ta.rows = ta.rows === 6 ? 16 : 6;
+  document.getElementById('desc-expand-btn').querySelector('svg').style.transform = ta.rows === 16 ? 'rotate(180deg)' : '';
+}
+
+function setStep(n) {
+  for (let i=1; i<=4; i++) {
+    const el = document.getElementById(`step${i}`);
+    el.className = 'tb-step' + (i < n ? ' done' : i === n ? ' active' : '');
+    el.querySelector('.tb-step-num').textContent = i < n ? '✓' : i;
+  }
+}
+
+let _outputHTML = null;
+
+function showSkeleton() {
+  const op = document.getElementById('rp-output');
+  // Save original HTML on first call
+  if (!_outputHTML) _outputHTML = op.innerHTML;
+  op.style.display = '';
+  op.innerHTML = `<div style="padding:8px 0">
+    ${[80,65,90,55,70,60].map(w => `
+    <div style="background:var(--navy2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;">
+      <div class="skel" style="width:28%;height:9px;margin-bottom:14px;"></div>
+      <div class="skel" style="width:${w}%;height:16px;margin-bottom:8px;"></div>
+      <div class="skel" style="width:${w-20}%;height:13px;"></div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function hideSkeleton() {
+  const op = document.getElementById('rp-output');
+  if (_outputHTML) op.innerHTML = _outputHTML;
+  op.style.display = 'none'; // will be shown by renderOutput
+}
+
+function toast(msg, type='info') {
+  const wrap = document.getElementById('toast-wrap');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  const icons = { success:'✅', error:'❌', info:'ℹ️' };
+  t.innerHTML = `<span>${icons[type]||'ℹ️'}</span><span>${msg}</span>`;
+  wrap.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+// ── eBay Connect ──────────────────────────────────────────────
+let ebayAccounts = [];
+
+async function checkEbayStatus() {
+  const token = localStorage.getItem('listai_token');
+  if (!token) return;
+  try {
+    const r = await fetch(`${API}/ebay/accounts`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const d = await r.json();
+    ebayAccounts = d.accounts || [];
+    const btn = document.getElementById('tb-ebay-btn');
+    const lbl = document.getElementById('tb-ebay-label');
+    if (ebayAccounts.length > 0) {
+      btn.classList.add('connected');
+      const username = ebayAccounts[0].ebay_username || 'eBay account';
+      lbl.textContent = `✓ ${username}`;
+    } else {
+      btn.classList.remove('connected');
+      lbl.textContent = 'Connect eBay';
+    }
+  } catch(e) {}
+}
+
+function handleEbayConnect() {
+  if (ebayAccounts.length > 0) {
+    toast(`Connected as: ${ebayAccounts[0].ebay_username || 'eBay account'}`, 'success');
+  } else {
+    openEbayModal();
+  }
+}
+
+function openEbayModal() {
+  document.getElementById('ebay-modal').style.display = 'flex';
+}
+
+function closeEbayModal() {
+  document.getElementById('ebay-modal').style.display = 'none';
+}
+
+function connectEbay() {
+  const token = localStorage.getItem('listai_token');
+  if (!token) { toast('Please log in first', 'error'); return; }
+  window.location.href = `${API}/ebay/connect?sandbox=true&token=${token}`;
+}
+
+function handleEbayConnect() {
+  if (ebayAccounts.length > 0) {
+    toast(`Connected as: ${ebayAccounts[0].ebay_username || 'eBay account'}`, 'success');
+  } else {
+    connectEbay();
+  }
+}
+
+// ── Init ──────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  checkEbayStatus();
+  const titleInput = document.getElementById('inp-title');
+  if (titleInput) {
+    titleInput.addEventListener('keydown', e => { if (e.key === 'Enter') generate(); });
+    titleInput.addEventListener('input', () => {
+      if (titleInput.value.trim().length > 3) {
+        document.getElementById('extra-images-section').style.display = '';
+      }
+    });
+  }
+});
+</script>
+
+<!-- eBay Connect Modal -->
+<div class="ebay-modal-overlay" id="ebay-modal" style="display:none;" onclick="if(event.target===this)closeEbayModal()">
+  <div class="ebay-modal">
+    <div class="ebay-modal-icon">🔗</div>
+    <div class="ebay-modal-title">Connect your eBay account</div>
+    <div class="ebay-modal-sub">To publish listings directly to eBay, you need to connect your eBay account. It only takes a few seconds.</div>
+    <div class="ebay-modal-btns">
+      <button class="ebay-connect-btn" onclick="connectEbay()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M13 8A5 5 0 1 1 3 8a5 5 0 0 1 10 0z" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Connect eBay Account
+      </button>
+      <button class="ebay-modal-cancel" onclick="closeEbayModal()">Maybe later</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
