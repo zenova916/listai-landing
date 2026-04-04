@@ -310,7 +310,7 @@ footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-i
 <body>
 
 <nav>
-  <a href="index.html" class="logo">
+  <a href="#" class="logo">
   
     <span class="logo-text"><span class="li">EbayList</span><span class="ai">AI</span></span>
   </a>
@@ -321,7 +321,7 @@ footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-i
     <li><a href="#pricing">Pricing</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  <div class="nav-r" id="nav-r">
+  <div class="nav-r">
     <a href="#" class="btn-ghost" onclick="openAuth('login');return false;">Log in</a>
     <a href="#" class="btn-cta" onclick="openAuth('signup');return false;">Start free — 5 listings</a>
   </div>
@@ -540,7 +540,7 @@ footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-i
     <div class="contact-info">
       <h3>Get in touch</h3>
       <p>Whether you have questions about pricing, need technical support, or want to learn how <span style="color:var(--eb);font-weight:600;">ListAI</span> can work for your eBay selling needs — we're happy to help.</p>
-      <div class="contact-detail"><div class="cd-icon">📧</div><div class="cd-text"><strong>Email Support</strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f98a8c8989968b8db99c9b988095908a8d9890d79a9694">[email&#160;protected]</a></div></div>
+      <div class="contact-detail"><div class="cd-icon">📧</div><div class="cd-text"><strong>Email Support</strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a6d5d3d6d6c9d4d2e6c3c4c7dfcacfd5d2c7cf88c5c9cb">[email&#160;protected]</a></div></div>
       <div class="contact-detail"><div class="cd-icon">⚡</div><div class="cd-text"><strong>Response Time</strong>Within 24 hours on business days</div></div>
       <div class="contact-detail"><div class="cd-icon">🌍</div><div class="cd-text"><strong>Coverage</strong>eBay US marketplace supported</div></div>
     </div>
@@ -622,36 +622,34 @@ async function runD(){
   finally{btn.disabled=false;btn.classList.remove('loading');}
 }
 document.addEventListener('DOMContentLoaded',()=>{
+  // Demo enter key
   document.getElementById('d-input').addEventListener('keydown',e=>{if(e.key==='Enter')runD();});
 
-  // ── Show logged-in state in nav ───────────────────────────
-  const _tok  = localStorage.getItem('listai_token');
-  const _user = JSON.parse(localStorage.getItem('listai_user')||'{}');
-  if(_tok && _user && (_user.name||_user.email)){
-    document.getElementById('nav-r').innerHTML=`
-      <a href="listing-tool.html" class="btn-ghost">Dashboard</a>
-      <span style="font-family:var(--fm);font-size:12px;color:var(--slate2);">👋 ${_user.name||_user.email}</span>
-      <button class="btn-ghost" onclick="indexLogout()" style="color:var(--slate2);">Sign out</button>`;
+  // ── Fade-up IntersectionObserver (fixes blank sections) ──────
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{if(en.isIntersecting){en.target.classList.add('visible');obs.unobserve(en.target);}});
+  },{threshold:0.12});
+  document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+
+  // ── Logged-in nav state ───────────────────────────────────────
+  const _tok=localStorage.getItem('listai_token');
+  const _user=JSON.parse(localStorage.getItem('listai_user')||'{}');
+  if(_tok&&(_user.name||_user.email)){
+    document.getElementById('nav-r').innerHTML=
+      '<a href="listing-tool.html" class="btn-ghost">Dashboard</a>'+
+      '<span style="font-family:var(--fm);font-size:12px;color:var(--slate2);">👋 '+(_user.name||_user.email)+'</span>'+
+      '<button class="btn-ghost" onclick="indexLogout()" style="color:var(--slate2);">Sign out</button>';
   }
 
-  // ── Inactivity logout (5 hours) ───────────────────────────
-  const FIVE_H = 5*60*60*1000;
-  const ACT_KEY = 'listai_last_active';
-  function touchActive(){ localStorage.setItem(ACT_KEY, Date.now()); }
-  function checkInactive(){
-    const last = parseInt(localStorage.getItem(ACT_KEY)||'0');
-    if(last && Date.now()-last > FIVE_H) indexLogout();
-  }
+  // ── Inactivity logout (5 hours) ───────────────────────────────
+  const FIVE_H=5*60*60*1000,ACT_KEY='listai_last_active';
+  function touchActive(){localStorage.setItem(ACT_KEY,Date.now());}
+  function checkInactive(){const last=parseInt(localStorage.getItem(ACT_KEY)||'0');if(last&&Date.now()-last>FIVE_H)indexLogout();}
   ['click','keydown','scroll','mousemove'].forEach(ev=>document.addEventListener(ev,touchActive,{passive:true}));
   touchActive();
-  setInterval(checkInactive, 60000);
+  setInterval(checkInactive,60000);
 });
-function indexLogout(){
-  localStorage.removeItem('listai_token');
-  localStorage.removeItem('listai_user');
-  localStorage.removeItem('listai_last_active');
-  window.location.reload();
-}
+function indexLogout(){localStorage.removeItem('listai_token');localStorage.removeItem('listai_user');localStorage.removeItem('listai_last_active');window.location.reload();}
 function openAuth(t){document.getElementById('auth-modal').classList.add('open');document.body.style.overflow='hidden';sw(t||'signup');}
 function closeAuth(){document.getElementById('auth-modal').classList.remove('open');document.body.style.overflow='';}
 function hoc(e){if(e.target===document.getElementById('auth-modal'))closeAuth();}
@@ -689,5 +687,5 @@ function sendContact(){
   const message=document.getElementById('cf-message').value.trim();
   const msg=document.getElementById('cf-msg');
   if(!name||!email||!message){msg.textContent='Please fill in all required fields.';msg.className='cf-msg err';return;}
-  window.location.href=`mailto:zenova916@gmail.com?subject=${encodeURIComponent(subject||'EbayListAI Support')}&body=${encodeURIComponent('Name: '+name+'\nEmail: '+email+'\n\n'+message)}`;
+  const _em='zenova916'+'@'+'gmail.com';window.location.href=`mailto:${_em}?subject=${encodeURIComponent(subject||'ListAI Support')}&body=${encodeURIComponent('Name: '+name+'\nEmail: '+email+'\n\n'+message)}`;
   msg.textContent='✅ Opening your email client...';msg.className='cf-msg
