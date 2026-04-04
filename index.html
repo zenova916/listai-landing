@@ -310,7 +310,7 @@ footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-i
 <body>
 
 <nav>
-  <a href="#" class="logo">
+  <a href="index.html" class="logo">
   
     <span class="logo-text"><span class="li">EbayList</span><span class="ai">AI</span></span>
   </a>
@@ -321,7 +321,7 @@ footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-i
     <li><a href="#pricing">Pricing</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  <div class="nav-r">
+  <div class="nav-r" id="nav-r">
     <a href="#" class="btn-ghost" onclick="openAuth('login');return false;">Log in</a>
     <a href="#" class="btn-cta" onclick="openAuth('signup');return false;">Start free — 5 listings</a>
   </div>
@@ -540,7 +540,7 @@ footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-i
     <div class="contact-info">
       <h3>Get in touch</h3>
       <p>Whether you have questions about pricing, need technical support, or want to learn how <span style="color:var(--eb);font-weight:600;">ListAI</span> can work for your eBay selling needs — we're happy to help.</p>
-      <div class="contact-detail"><div class="cd-icon">📧</div><div class="cd-text"><strong>Email Support</strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a6d5d3d6d6c9d4d2e6c3c4c7dfcacfd5d2c7cf88c5c9cb">[email&#160;protected]</a></div></div>
+      <div class="contact-detail"><div class="cd-icon">📧</div><div class="cd-text"><strong>Email Support</strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1b686e6b6b74696f5b7e797a627772686f7a7235787476">[email&#160;protected]</a></div></div>
       <div class="contact-detail"><div class="cd-icon">⚡</div><div class="cd-text"><strong>Response Time</strong>Within 24 hours on business days</div></div>
       <div class="contact-detail"><div class="cd-icon">🌍</div><div class="cd-text"><strong>Coverage</strong>eBay US marketplace supported</div></div>
     </div>
@@ -597,7 +597,7 @@ footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-i
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 const API="https://listai-api.onrender.com";
 function sd(v){document.getElementById('d-input').value=v;}
 async function runD(){
@@ -621,35 +621,30 @@ async function runD(){
   }catch(e){ph.style.display='none';err.style.display='block';err.textContent=`⚠ ${e.message}`;}
   finally{btn.disabled=false;btn.classList.remove('loading');}
 }
-document.addEventListener('DOMContentLoaded',()=>{
-  // Demo enter key
-  document.getElementById('d-input').addEventListener('keydown',e=>{if(e.key==='Enter')runD();});
+document.addEventListener('DOMContentLoaded',function(){
+  document.getElementById('d-input').addEventListener('keydown',function(e){if(e.key==='Enter')runD();});
 
-  // ── Fade-up IntersectionObserver (fixes blank sections) ──────
-  const obs=new IntersectionObserver((entries)=>{
-    entries.forEach(en=>{if(en.isIntersecting){en.target.classList.add('visible');obs.unobserve(en.target);}});
-  },{threshold:0.12});
-  document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+  // Fix blank sections
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){if(en.isIntersecting){en.target.classList.add('visible');obs.unobserve(en.target);}});
+  },{threshold:0.1});
+  document.querySelectorAll('.fade-up').forEach(function(el){obs.observe(el);});
 
-  // ── Logged-in nav state ───────────────────────────────────────
-  const _tok=localStorage.getItem('listai_token');
-  const _user=JSON.parse(localStorage.getItem('listai_user')||'{}');
-  if(_tok&&(_user.name||_user.email)){
+  // Show logged-in nav if session exists
+  var tok=localStorage.getItem('listai_token');
+  var usr=JSON.parse(localStorage.getItem('listai_user')||'{}');
+  if(tok&&(usr.name||usr.email)){
     document.getElementById('nav-r').innerHTML=
       '<a href="listing-tool.html" class="btn-ghost">Dashboard</a>'+
-      '<span style="font-family:var(--fm);font-size:12px;color:var(--slate2);">👋 '+(_user.name||_user.email)+'</span>'+
+      '<span style="font-family:var(--fm);font-size:12px;color:var(--slate2);">Hi, '+(usr.name||usr.email)+'</span>'+
       '<button class="btn-ghost" onclick="indexLogout()" style="color:var(--slate2);">Sign out</button>';
   }
-
-  // ── Inactivity logout (5 hours) ───────────────────────────────
-  const FIVE_H=5*60*60*1000,ACT_KEY='listai_last_active';
-  function touchActive(){localStorage.setItem(ACT_KEY,Date.now());}
-  function checkInactive(){const last=parseInt(localStorage.getItem(ACT_KEY)||'0');if(last&&Date.now()-last>FIVE_H)indexLogout();}
-  ['click','keydown','scroll','mousemove'].forEach(ev=>document.addEventListener(ev,touchActive,{passive:true}));
-  touchActive();
-  setInterval(checkInactive,60000);
 });
-function indexLogout(){localStorage.removeItem('listai_token');localStorage.removeItem('listai_user');localStorage.removeItem('listai_last_active');window.location.reload();}
+function indexLogout(){
+  localStorage.removeItem('listai_token');
+  localStorage.removeItem('listai_user');
+  window.location.reload();
+}
 function openAuth(t){document.getElementById('auth-modal').classList.add('open');document.body.style.overflow='hidden';sw(t||'signup');}
 function closeAuth(){document.getElementById('auth-modal').classList.remove('open');document.body.style.overflow='';}
 function hoc(e){if(e.target===document.getElementById('auth-modal'))closeAuth();}
@@ -664,7 +659,7 @@ async function doSU(){
     const r=await fetch(`${API}/auth/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,email:e,password:p})});
     const d=await r.json();
     if(!r.ok){sm('su-m',d.detail||'Signup failed.','err');return;}
-    localStorage.setItem('listai_token',d.token);localStorage.setItem('listai_user',JSON.stringify(d));localStorage.setItem('listai_last_active',Date.now());
+    localStorage.setItem('listai_token',d.token);localStorage.setItem('listai_user',JSON.stringify(d));
     sm('su-m','✅ Account created! Check your email to verify. Redirecting...','ok');
     setTimeout(()=>window.location.href='listing-tool.html',2200);
   }catch(e){sm('su-m','Could not reach server. Make sure the backend is running.','err');}
@@ -676,7 +671,7 @@ async function doLI(){
     const r=await fetch(`${API}/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,password:p})});
     const d=await r.json();
     if(!r.ok){sm('li-m',d.detail||'Login failed.','err');return;}
-    localStorage.setItem('listai_token',d.token);localStorage.setItem('listai_user',JSON.stringify(d));localStorage.setItem('listai_last_active',Date.now());
+    localStorage.setItem('listai_token',d.token);localStorage.setItem('listai_user',JSON.stringify(d));
     window.location.href='listing-tool.html';
   }catch(e){sm('li-m','Could not reach server.','err');}
 }
@@ -687,5 +682,5 @@ function sendContact(){
   const message=document.getElementById('cf-message').value.trim();
   const msg=document.getElementById('cf-msg');
   if(!name||!email||!message){msg.textContent='Please fill in all required fields.';msg.className='cf-msg err';return;}
-  const _em='zenova916'+'@'+'gmail.com';window.location.href=`mailto:${_em}?subject=${encodeURIComponent(subject||'ListAI Support')}&body=${encodeURIComponent('Name: '+name+'\nEmail: '+email+'\n\n'+message)}`;
+  window.location.href=`mailto:support@ebaylistai.com?subject=${encodeURIComponent(subject||'ListAI Support')}&body=${encodeURIComponent('Name: '+name+'\nEmail: '+email+'\n\n'+message)}`;
   msg.textContent='✅ Opening your email client...';msg.className='cf-msg

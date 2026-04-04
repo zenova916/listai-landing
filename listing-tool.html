@@ -235,7 +235,7 @@ textarea.lp-input{min-height:80px;line-height:1.6;}
       <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       <span id="tb-ebay-label">Connect eBay</span>
     </button>
-    <span class="tb-user" id="tb-user-name" onclick="toggleProfileDd()" style="cursor:pointer;" title="Account info">Loading...</span>
+    <span class="tb-user" id="tb-user-name" onclick="toggleProfileDd()" style="cursor:pointer;" title="View profile">Loading...</span>
     <button class="tb-logout" onclick="logout()">Sign out</button>
   </div>
 </div>
@@ -628,52 +628,44 @@ document.getElementById('quota-total').textContent = user.listings_quota || 5;
 function logout() {
   localStorage.removeItem('listai_token');
   localStorage.removeItem('listai_user');
-  localStorage.removeItem('listai_last_active');
   window.location.href = 'index.html';
 }
 
-// ── Profile dropdown ──────────────────────────────────────────
 function toggleProfileDd() {
-  const existing = document.getElementById('profile-dd');
+  var existing = document.getElementById('profile-dd');
   if (existing) { existing.remove(); return; }
-  const u    = JSON.parse(localStorage.getItem('listai_user') || '{}');
-  const span = document.getElementById('tb-user-name');
-  const rect = span.getBoundingClientRect();
-  const dd   = document.createElement('div');
+  var u    = JSON.parse(localStorage.getItem('listai_user') || '{}');
+  var span = document.getElementById('tb-user-name');
+  var rect = span.getBoundingClientRect();
+  var dd   = document.createElement('div');
   dd.id = 'profile-dd';
-  dd.style.cssText = 'position:fixed;top:'+(rect.bottom+6)+'px;right:'+(window.innerWidth-rect.right)+'px;'+
-    'background:#0f1729;border:1px solid rgba(255,255,255,.14);border-radius:12px;'+
-    'padding:16px;min-width:220px;z-index:9999;box-shadow:0 12px 40px rgba(0,0,0,.7);';
-  const plan  = (u.plan||'free').charAt(0).toUpperCase()+(u.plan||'free').slice(1);
-  const used  = u.listings_used||0;
-  const quota = u.listings_quota||5;
+  dd.style.cssText = 'position:fixed;top:'+(rect.bottom+8)+'px;right:'+(window.innerWidth-rect.right)+'px;'
+    +'background:#0f1729;border:1px solid rgba(255,255,255,.15);border-radius:12px;'
+    +'padding:18px;min-width:230px;z-index:9999;box-shadow:0 16px 48px rgba(0,0,0,.7);';
+  var plan  = (u.plan || 'free');
+  var planLabel = plan.charAt(0).toUpperCase() + plan.slice(1);
+  var used  = u.listings_used  || 0;
+  var quota = u.listings_quota || 5;
   dd.innerHTML =
-    '<p style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:8px;">Account</p>'+
-    '<p style="font-size:14px;font-weight:700;color:#fff;margin-bottom:2px;">'+(u.name||'User')+'</p>'+
-    '<p style="font-size:11px;color:#94a3b8;margin-bottom:12px;">'+(u.email||'')+'</p>'+
-    '<div style="display:flex;justify-content:space-between;background:rgba(255,255,255,.04);border-radius:8px;padding:8px 12px;margin-bottom:12px;">'+
-      '<span style="font-size:12px;color:#94a3b8;">Plan</span><span style="font-size:12px;font-weight:700;color:#3b82f6;">'+plan+'</span></div>'+
-    '<div style="display:flex;justify-content:space-between;background:rgba(255,255,255,.04);border-radius:8px;padding:8px 12px;margin-bottom:14px;">'+
-      '<span style="font-size:12px;color:#94a3b8;">Listings used</span><span style="font-size:12px;font-weight:700;color:#fff;">'+used+' / '+quota+'</span></div>'+
-    '<button onclick="logout()" style="width:100%;padding:9px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);'+
-      'color:#f87171;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;">Sign out</button>';
+    '<p style="font-size:9px;font-family:\'DM Mono\',monospace;letter-spacing:.12em;text-transform:uppercase;color:#64748b;margin-bottom:10px;">Account</p>'+
+    '<p style="font-size:15px;font-weight:700;color:#fff;margin-bottom:3px;">'+(u.name||'User')+'</p>'+
+    '<p style="font-size:12px;color:#94a3b8;margin-bottom:14px;">'+(u.email||'')+'</p>'+
+    '<div style="display:flex;justify-content:space-between;background:rgba(255,255,255,.05);border-radius:8px;padding:9px 12px;margin-bottom:8px;">'+
+      '<span style="font-size:12px;color:#94a3b8;">Plan</span>'+
+      '<span style="font-size:12px;font-weight:700;color:#3b82f6;">'+planLabel+'</span>'+
+    '</div>'+
+    '<div style="display:flex;justify-content:space-between;background:rgba(255,255,255,.05);border-radius:8px;padding:9px 12px;margin-bottom:16px;">'+
+      '<span style="font-size:12px;color:#94a3b8;">Listings used</span>'+
+      '<span style="font-size:12px;font-weight:700;color:#fff;">'+used+' / '+quota+'</span>'+
+    '</div>'+
+    '<button onclick="logout()" style="width:100%;padding:10px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#f87171;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;">Sign out</button>';
   document.body.appendChild(dd);
-  setTimeout(()=>{
+  setTimeout(function(){
     document.addEventListener('click', function close(e){
-      if(!dd.contains(e.target) && !span.contains(e.target)){dd.remove();document.removeEventListener('click',close);}
+      if(!dd.contains(e.target) && e.target!==span){ dd.remove(); document.removeEventListener('click',close); }
     });
   }, 0);
 }
-
-// ── Inactivity logout (5 hours) ───────────────────────────────
-(function(){
-  const FIVE_H=5*60*60*1000, ACT_KEY='listai_last_active';
-  function touch(){localStorage.setItem(ACT_KEY,Date.now());}
-  function check(){const last=parseInt(localStorage.getItem(ACT_KEY)||'0');if(last&&Date.now()-last>FIVE_H)logout();}
-  ['click','keydown','scroll','mousemove'].forEach(ev=>document.addEventListener(ev,touch,{passive:true}));
-  touch();
-  setInterval(check,60000);
-})();
 
 // ── Mode switching ────────────────────────────────────────────
 function setMode(m) {
