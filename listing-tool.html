@@ -1259,10 +1259,59 @@ async function checkEbayStatus() {
 
 function handleEbayConnect() {
   if (ebayAccounts.length > 0) {
-    toast(`Connected as: ${ebayAccounts[0].ebay_username || 'eBay account'}`, 'success');
+    // toggle dropdown
+    const existing = document.getElementById('ebay-acct-dropdown');
+    if (existing) { existing.remove(); return; }
+    const acc = ebayAccounts[0];
+    const name = (acc.ebay_username && acc.ebay_username !== 'eBay account')
+      ? acc.ebay_username : (acc.email || acc.user_id || 'eBay account');
+    const env  = acc.sandbox ? '🟡 Sandbox' : '🟢 Production';
+    const btn  = document.getElementById('tb-ebay-btn');
+    const rect = btn.getBoundingClientRect();
+    const dd   = document.createElement('div');
+    dd.id = 'ebay-acct-dropdown';
+    dd.style.cssText = `position:fixed;top:${rect.bottom+6}px;right:${window.innerWidth-rect.right}px;
+      background:#0f1729;border:1px solid rgba(255,255,255,.14);border-radius:10px;
+      padding:14px 16px;min-width:210px;z-index:9999;
+      box-shadow:0 12px 40px rgba(0,0,0,.7);`;
+    dd.innerHTML = `
+      <p style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:6px;">eBay Account</p>
+      <p style="font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;">${name}</p>
+      <p style="font-size:11px;color:#94a3b8;margin-bottom:14px;">${env}</p>
+      <button onclick="doDisconnectEbay('${acc.id}')"
+        style="width:100%;padding:8px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);
+        color:#f87171;border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;">
+        Disconnect eBay
+      </button>`;
+    document.body.appendChild(dd);
+    // close on outside click
+    setTimeout(() => {
+      document.addEventListener('click', function close(e) {
+        if (!dd.contains(e.target) && !btn.contains(e.target)) {
+          dd.remove();
+          document.removeEventListener('click', close);
+        }
+      });
+    }, 0);
   } else {
     openEbayModal();
   }
+}
+
+async function doDisconnectEbay(id) {
+  const token = localStorage.getItem('listai_token');
+  try {
+    await fetch(`${API}/ebay/accounts/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+  } catch(e) {}
+  ebayAccounts = [];
+  document.getElementById('tb-ebay-btn').classList.remove('connected');
+  document.getElementById('tb-ebay-label').textContent = 'Connect eBay';
+  const dd = document.getElementById('ebay-acct-dropdown');
+  if (dd) dd.remove();
+  toast('eBay account disconnected', 'success');
 }
 
 function openEbayModal() {
@@ -1277,14 +1326,6 @@ function connectEbay() {
   const token = localStorage.getItem('listai_token');
   if (!token) { toast('Please log in first', 'error'); return; }
   window.location.href = `${API}/ebay/connect?sandbox=true&token=${token}`;
-}
-
-function handleEbayConnect() {
-  if (ebayAccounts.length > 0) {
-    toast(`Connected as: ${ebayAccounts[0].ebay_username || 'eBay account'}`, 'success');
-  } else {
-    connectEbay();
-  }
 }
 
 // ── Init ──────────────────────────────────────────────────────
