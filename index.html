@@ -540,7 +540,7 @@ footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-i
     <div class="contact-info">
       <h3>Get in touch</h3>
       <p>Whether you have questions about pricing, need technical support, or want to learn how <span style="color:var(--eb);font-weight:600;">ListAI</span> can work for your eBay selling needs — we're happy to help.</p>
-      <div class="contact-detail"><div class="cd-icon">📧</div><div class="cd-text"><strong>Email Support</strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1a696f6a6a75686e5a7f787b637673696e7b7334797577">[email&#160;protected]</a></div></div>
+      <div class="contact-detail"><div class="cd-icon">📧</div><div class="cd-text"><strong>Email Support</strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f88b8d8888978a8cb89d9a998194918b8c9991d69b9795">[email&#160;protected]</a></div></div>
       <div class="contact-detail"><div class="cd-icon">⚡</div><div class="cd-text"><strong>Response Time</strong>Within 24 hours on business days</div></div>
       <div class="contact-detail"><div class="cd-icon">🌍</div><div class="cd-text"><strong>Coverage</strong>eBay US marketplace supported</div></div>
     </div>
@@ -621,7 +621,7 @@ async function runD(){
   }catch(e){ph.style.display='none';err.style.display='block';err.textContent=`⚠ ${e.message}`;}
   finally{btn.disabled=false;btn.classList.remove('loading');}
 }
-// d-input enter key handled in IIFE below
+document.addEventListener('DOMContentLoaded',()=>{document.getElementById('d-input').addEventListener('keydown',e=>{if(e.key==='Enter')runD();});});
 function openAuth(t){document.getElementById('auth-modal').classList.add('open');document.body.style.overflow='hidden';sw(t||'signup');}
 function closeAuth(){document.getElementById('auth-modal').classList.remove('open');document.body.style.overflow='';}
 function hoc(e){if(e.target===document.getElementById('auth-modal'))closeAuth();}
@@ -660,9 +660,10 @@ function sendContact(){
   const msg=document.getElementById('cf-msg');
   if(!name||!email||!message){msg.textContent='Please fill in all required fields.';msg.className='cf-msg err';return;}
   window.location.href=`mailto:zenova916@gmail.com?subject=${encodeURIComponent(subject||'EbayListAI Support')}&body=${encodeURIComponent('Name: '+name+'\nEmail: '+email+'\n\n'+message)}`;
-  msg.textContent='✅ Opening your email client...';msg.className='cf-msg ok';}
+  msg.textContent='✅ Opening your email client...';msg.className='cf-msg ok';
+}
 
-// ── Session: show logged-in nav + inactivity logout ───────────
+// ── Session: show logged-in nav ───────────────────────────────
 function indexLogout(){
   localStorage.removeItem('listai_token');
   localStorage.removeItem('listai_user');
@@ -670,7 +671,6 @@ function indexLogout(){
   window.location.reload();
 }
 (function(){
-  // Swap nav if already logged in
   var tok=localStorage.getItem('listai_token');
   var usr=JSON.parse(localStorage.getItem('listai_user')||'{}');
   if(tok&&(usr.name||usr.email)){
@@ -679,17 +679,18 @@ function indexLogout(){
       +'<span style="font-family:var(--fm);font-size:12px;color:var(--slate2);padding:0 6px;">👋 '+(usr.name||usr.email)+'</span>'
       +'<button class="btn-ghost" onclick="indexLogout()" style="color:var(--slate2);">Sign out</button>';
   }
-  // Inactivity logout after 5 hours
-  var FIVE_H=5*60*60*1000, KEY='listai_last_active';
+  var FIVE_H=5*60*60*1000,KEY='listai_last_active';
   function touch(){localStorage.setItem(KEY,Date.now());}
   function check(){var l=+localStorage.getItem(KEY)||0;if(l&&Date.now()-l>FIVE_H)indexLogout();}
   ['click','keydown','scroll','mousemove'].forEach(function(ev){document.addEventListener(ev,touch,{passive:true});});
-  touch();
-  setInterval(check,60000);
-  // Store activity on login/signup (patch doSU and doLI)
-  var _doSU=window.doSU,_doLI=window.doLI;
-  // activity touch on page load
+  touch(); setInterval(check,60000);
   document.addEventListener('DOMContentLoaded',function(){
-    document.getElementById('d-input').addEventListener('keydown',function(e){if(e.key==='Enter')runD();});
+    var di=document.getElementById('d-input');
+    if(di) di.addEventListener('keydown',function(e){if(e.key==='Enter')runD();});
   });
 })();
+const obs=new IntersectionObserver(en=>{en.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.1});
+document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

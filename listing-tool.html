@@ -235,7 +235,7 @@ textarea.lp-input{min-height:80px;line-height:1.6;}
       <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       <span id="tb-ebay-label">Connect eBay</span>
     </button>
-    <span class="tb-user" id="tb-user-name" onclick="toggleProfileDd()" style="cursor:pointer;" title="Click to view profile">Loading...</span>
+    <span class="tb-user" id="tb-user-name" onclick="toggleProfileDd()" style="cursor:pointer;" title="Click for profile">Loading...</span>
     <button class="tb-logout" onclick="logout()">Sign out</button>
   </div>
 </div>
@@ -633,37 +633,36 @@ function logout() {
 }
 
 function toggleProfileDd() {
-  var ex = document.getElementById('profile-dd');
-  if (ex) { ex.remove(); return; }
-  var u   = JSON.parse(localStorage.getItem('listai_user') || '{}');
-  var el  = document.getElementById('tb-user-name');
-  var r   = el.getBoundingClientRect();
-  var dd  = document.createElement('div');
-  dd.id = 'profile-dd';
-  dd.style.cssText = 'position:fixed;top:'+(r.bottom+6)+'px;right:'+(window.innerWidth-r.right)+'px;'
+  var ex=document.getElementById('profile-dd');
+  if(ex){ex.remove();return;}
+  var u=JSON.parse(localStorage.getItem('listai_user')||'{}');
+  var el=document.getElementById('tb-user-name');
+  var r=el.getBoundingClientRect();
+  var dd=document.createElement('div');
+  dd.id='profile-dd';
+  dd.style.cssText='position:fixed;top:'+(r.bottom+6)+'px;right:'+(window.innerWidth-r.right)+'px;'
     +'background:#0f1729;border:1px solid rgba(255,255,255,.14);border-radius:10px;'
     +'padding:16px;min-width:220px;z-index:9999;box-shadow:0 12px 40px rgba(0,0,0,.7);';
-  dd.innerHTML = '<p style="font-family:\'DM Mono\',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:8px;">My Account</p>'
+  dd.innerHTML='<p style="font-family:\'DM Mono\',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:8px;">My Account</p>'
     +'<p style="font-size:14px;font-weight:700;color:#fff;margin-bottom:3px;">'+(u.name||'User')+'</p>'
     +'<p style="font-size:11px;color:#94a3b8;margin-bottom:3px;">'+(u.email||'')+'</p>'
     +'<p style="font-size:11px;color:#94a3b8;margin-bottom:14px;">Plan: <span style="color:#f59e0b;font-weight:600;text-transform:capitalize;">'+(u.plan||'Free')+'</span> &nbsp;·&nbsp; Listings: '+(u.listings_used||0)+'/'+(u.listings_quota||5)+'</p>'
     +'<button onclick="logout()" style="width:100%;padding:8px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#f87171;border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;">Sign out</button>';
   document.body.appendChild(dd);
   setTimeout(function(){
-    document.addEventListener('click', function cls(e){
+    document.addEventListener('click',function cls(e){
       if(!dd.contains(e.target)&&!el.contains(e.target)){dd.remove();document.removeEventListener('click',cls);}
     });
-  }, 0);
+  },0);
 }
 
 // Inactivity logout after 5 hours
 (function(){
-  var FIVE_H=5*60*60*1000, KEY='listai_last_active';
+  var FIVE_H=5*60*60*1000,KEY='listai_last_active';
   function touch(){localStorage.setItem(KEY,Date.now());}
   function check(){var l=+localStorage.getItem(KEY)||0;if(l&&Date.now()-l>FIVE_H)logout();}
   ['click','keydown','scroll','mousemove'].forEach(function(ev){document.addEventListener(ev,touch,{passive:true});});
-  touch();
-  setInterval(check,60000);
+  touch();setInterval(check,60000);
 })();
 
 // ── Mode switching ────────────────────────────────────────────
