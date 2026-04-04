@@ -3,123 +3,116 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EbayListAI — AI-Powered eBay Listing Generator</title>
-<meta name="description" content="EbayListAI writes optimised eBay listings using AI. Better titles, richer descriptions, perfect categories, auto-published.">
+<title>ListAI — Sell More on eBay with AI-Powered Listings</title>
+<meta name="description" content="ListAI writes optimised eBay listings using AI. Better titles, richer descriptions, perfect categories, auto-published. Trusted by 1,200+ eBay sellers.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --eb:#3665F3;--eb2:#2851D3;--ey:#F5AF02;--er:#E53238;--eg:#86B817;
   --navy:#070d1a;--navy2:#0f1729;--navy3:#1a2540;
-  --cyan:#06b6d4;--green:#86B817;--amber:#F5AF02;--red:#E53238;
-  --white:#fff;--slate:#64748b;--slate2:#94a3b8;
-  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.04);
-  --glow:rgba(54,101,243,.45);
-  --f:'Inter',sans-serif;--fm:'DM Mono',monospace;
+  --blue:#2563eb;--blue2:#1d4ed8;--blue3:#3b82f6;
+  --cyan:#06b6d4;--green:#10b981;--amber:#f59e0b;--red:#ef4444;
+  --white:#ffffff;--off:#f8fafc;--slate:#64748b;--slate2:#94a3b8;--slate3:#cbd5e1;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.04);
+  --glow:rgba(37,99,235,0.45);
+  --f:'Plus Jakarta Sans',sans-serif;--fi:'Instrument Serif',serif;--fm:'DM Mono',monospace;
+  --r:14px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{background:var(--navy);color:#fff;font-family:var(--f);font-size:16px;line-height:1.6;overflow-x:hidden;}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.018;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:200;height:66px;display:flex;align-items:center;justify-content:space-between;padding:0 52px;background:rgba(7,13,26,.92);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 52px;
+  background:rgba(7,13,26,0.88);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.logo-icon{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--eb),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff;}
-.logo-text{font-size:19px;font-weight:800;letter-spacing:-.3px;}
-.logo-text .li{color:var(--eb);}.logo-text .ai{color:#fff;}
+.logo-icon{width:35px;height:35px;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;}
+.logo-text{font-size:19px;font-weight:800;color:#fff;letter-spacing:-.3px;}
+.logo-text span{color:var(--cyan);}
 nav ul{display:flex;align-items:center;gap:4px;list-style:none;}
 nav ul a{font-size:14px;font-weight:500;color:var(--slate2);text-decoration:none;padding:7px 15px;border-radius:8px;transition:all .2s;}
 nav ul a:hover{color:#fff;background:rgba(255,255,255,.05);}
 .nav-r{display:flex;align-items:center;gap:10px;}
 .btn-ghost{font-size:14px;font-weight:600;color:var(--slate2);padding:8px 18px;border-radius:9px;border:1px solid var(--border);background:none;cursor:pointer;transition:all .2s;text-decoration:none;}
-.btn-ghost:hover{color:#fff;border-color:rgba(255,255,255,.2);}
-.btn-cta{font-size:14px;font-weight:700;color:#fff;padding:9px 22px;border-radius:9px;background:linear-gradient(135deg,var(--eb),var(--cyan));border:none;cursor:pointer;transition:all .2s;text-decoration:none;}
+.btn-ghost:hover{color:#fff;border-color:rgba(255,255,255,.18);}
+.btn-cta{font-size:14px;font-weight:700;color:#fff;padding:9px 22px;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--blue3));border:none;cursor:pointer;transition:all .2s;text-decoration:none;box-shadow:0 0 0 0 var(--glow);}
 .btn-cta:hover{transform:translateY(-1px);box-shadow:0 6px 28px var(--glow);}
 
 /* HERO */
-.hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:100px 52px 80px;overflow:hidden;text-align:center;}
-.hero-orb{position:absolute;border-radius:50%;filter:blur(80px);animation:orb-float 8s ease-in-out infinite;pointer-events:none;}
-.orb1{width:600px;height:600px;background:radial-gradient(circle,rgba(54,101,243,.35),transparent 70%);top:-100px;left:-100px;}
-.orb2{width:500px;height:500px;background:radial-gradient(circle,rgba(6,182,212,.25),transparent 70%);bottom:-100px;right:-100px;animation-delay:-3s;}
-.orb3{width:400px;height:400px;background:radial-gradient(circle,rgba(134,184,23,.15),transparent 70%);top:50%;left:60%;animation-delay:-5s;}
-@keyframes orb-float{0%,100%{transform:translate(0,0);}50%{transform:translate(20px,-15px);}}
-.hero-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(54,101,243,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(54,101,243,.06) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 90% 80% at 50% 50%,black,transparent 75%);transform:perspective(600px) rotateX(20deg);transform-origin:center bottom;}
-.particle{position:absolute;border-radius:50%;animation:p-float linear infinite;pointer-events:none;}
-@keyframes p-float{0%{transform:translateY(100vh);opacity:0;}10%{opacity:.7;}90%{opacity:.2;}100%{transform:translateY(-20px);opacity:0;}}
-.hero-3d-card{position:absolute;right:4%;top:50%;transform:translateY(-50%);width:270px;background:rgba(15,23,41,.9);border:1px solid rgba(54,101,243,.3);border-radius:16px;padding:20px;backdrop-filter:blur(20px);animation:card-float 6s ease-in-out infinite;box-shadow:0 20px 60px rgba(0,0,0,.4);display:none;}
-@media(min-width:1200px){.hero-3d-card{display:block;}}
-@keyframes card-float{0%,100%{transform:translateY(-50%) rotate(-1deg);}50%{transform:translateY(calc(-50% - 14px)) rotate(1deg);}}
-.hc-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:var(--green);background:rgba(134,184,23,.1);border:1px solid rgba(134,184,23,.3);padding:3px 9px;border-radius:10px;margin-bottom:12px;font-family:var(--fm);}
-.hc-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);}
-.hc-title{font-size:13px;font-weight:700;margin-bottom:8px;line-height:1.4;}
-.hc-price{font-size:22px;font-weight:800;color:var(--red);margin-bottom:10px;}
-.hc-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;}
-.hc-tag{font-size:10px;background:rgba(255,255,255,.06);border:1px solid var(--border);padding:2px 8px;border-radius:8px;color:var(--slate2);}
-.hc-btn{width:100%;padding:9px;background:var(--eb);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:default;}
-
-.hero-content{position:relative;z-index:2;max-width:860px;margin:0 auto;}
-.h-eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--fm);font-size:11px;color:var(--cyan);background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.22);padding:6px 16px;border-radius:20px;margin-bottom:32px;letter-spacing:.06em;text-transform:uppercase;}
+.hero{position:relative;min-height:100vh;padding:148px 52px 90px;overflow:hidden;}
+.h-mesh{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 70% 60% at 65% 25%,rgba(37,99,235,.2) 0%,transparent 60%),
+  radial-gradient(ellipse 50% 50% at 90% 80%,rgba(6,182,212,.13) 0%,transparent 60%),
+  radial-gradient(ellipse 40% 40% at 5% 90%,rgba(16,185,129,.09) 0%,transparent 60%);}
+.h-grid{position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);
+  background-size:56px 56px;mask-image:radial-gradient(ellipse 80% 70% at 55% 30%,black 0%,transparent 70%);}
+.h-eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--fm);font-size:11px;color:var(--cyan);background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.22);padding:5px 14px;border-radius:20px;margin-bottom:28px;letter-spacing:.06em;text-transform:uppercase;width:fit-content;}
 .h-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pu 2s ease-in-out infinite;}
-@keyframes pu{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.7)}}
-.hero h1{font-size:clamp(48px,7vw,88px);font-weight:900;line-height:1.0;letter-spacing:-3px;margin-bottom:16px;}
-.h-gr{background:linear-gradient(140deg,#fff 40%,rgba(148,163,184,.6));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.h-ai{background:linear-gradient(135deg,var(--eb),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.h-sub{font-size:19px;color:var(--slate2);max-width:600px;margin:0 auto 20px;line-height:1.8;}
-.h-sub strong{color:#fff;}
-.h-social{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:44px;flex-wrap:wrap;}
+@keyframes pu{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.75)}}
+.hero h1{font-size:clamp(48px,6.5vw,86px);font-weight:800;line-height:1.0;letter-spacing:-2.5px;max-width:880px;margin-bottom:14px;}
+.hero h1 .it{font-family:var(--fi);font-style:italic;font-weight:400;color:var(--cyan);}
+.hero h1 .gr{background:linear-gradient(140deg,#fff 40%,rgba(148,163,184,.7));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.h-sub{font-size:19px;color:var(--slate2);max-width:560px;line-height:1.8;margin-bottom:18px;}
+.h-sub strong{color:#fff;font-weight:600;}
+.h-social{display:flex;align-items:center;gap:16px;margin-bottom:44px;flex-wrap:wrap;}
 .h-avatars{display:flex;}
-.av{width:33px;height:33px;border-radius:50%;border:2px solid var(--navy);background:linear-gradient(135deg,var(--eb),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-left:-9px;}
+.av{width:33px;height:33px;border-radius:50%;border:2px solid var(--navy);background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-left:-9px;}
 .av:first-child{margin-left:0;}
-.h-stars{color:var(--amber);font-size:14px;}
 .h-social-text{font-size:13px;color:var(--slate2);}
 .h-social-text strong{color:#fff;}
-.h-btns{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:72px;}
-.btn-hero{display:inline-flex;align-items:center;gap:9px;background:linear-gradient(135deg,var(--eb),var(--cyan));color:#fff;font-size:16px;font-weight:700;padding:16px 36px;border-radius:12px;border:none;cursor:pointer;transition:all .25s;text-decoration:none;box-shadow:0 6px 36px var(--glow);}
-.btn-hero:hover{transform:translateY(-2px);box-shadow:0 12px 52px rgba(54,101,243,.55);}
+.h-stars{display:flex;gap:2px;color:var(--amber);font-size:14px;}
+.h-btns{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:72px;}
+.btn-hero{display:inline-flex;align-items:center;gap:9px;background:linear-gradient(135deg,var(--blue),var(--blue3));color:#fff;font-size:16px;font-weight:700;padding:16px 34px;border-radius:12px;border:none;cursor:pointer;transition:all .25s;text-decoration:none;box-shadow:0 6px 36px var(--glow);}
+.btn-hero:hover{transform:translateY(-2px);box-shadow:0 12px 52px rgba(37,99,235,.55);}
 .btn-hero svg{transition:transform .2s;}
 .btn-hero:hover svg{transform:translateX(4px);}
-.btn-hero2{display:inline-flex;align-items:center;gap:8px;color:var(--slate2);font-size:15px;font-weight:600;padding:15px 26px;border-radius:12px;border:1px solid var(--border);background:none;cursor:pointer;transition:all .2s;text-decoration:none;}
+.btn-hero2{display:inline-flex;align-items:center;gap:8px;color:var(--slate2);font-size:15px;font-weight:600;padding:15px 24px;border-radius:12px;border:1px solid var(--border);background:none;cursor:pointer;transition:all .2s;text-decoration:none;}
 .btn-hero2:hover{color:#fff;border-color:rgba(255,255,255,.2);}
-.h-metrics{display:flex;border:1px solid var(--border);border-radius:16px;background:rgba(255,255,255,.03);overflow:hidden;width:fit-content;margin:0 auto;flex-wrap:wrap;backdrop-filter:blur(10px);}
-.hm{padding:20px 36px;position:relative;text-align:center;}
+.h-metrics{display:flex;border:1px solid var(--border);border-radius:16px;background:rgba(255,255,255,.025);overflow:hidden;width:fit-content;flex-wrap:wrap;}
+.hm{padding:20px 32px;position:relative;}
 .hm+.hm::before{content:'';position:absolute;left:0;top:18%;bottom:18%;width:1px;background:var(--border);}
-.hm-n{font-size:32px;font-weight:800;letter-spacing:-1.5px;line-height:1;}
+.hm-n{font-size:32px;font-weight:800;letter-spacing:-1.5px;line-height:1;color:#fff;}
 .hm-n em{font-size:18px;font-style:normal;color:var(--cyan);}
 .hm-l{font-family:var(--fm);font-size:11px;color:var(--slate);margin-top:4px;letter-spacing:.04em;}
 
-/* SECTIONS */
-.s-eye{font-family:var(--fm);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;text-align:center;}
-.s-title{font-size:clamp(30px,4vw,52px);font-weight:800;letter-spacing:-1.5px;line-height:1.05;margin-bottom:16px;text-align:center;}
-.s-sub{font-size:16px;color:var(--slate2);max-width:500px;line-height:1.8;margin:0 auto 64px;text-align:center;}
-section{padding:100px 52px;}
+/* SECTION COMMONS */
+.s-eye{font-family:var(--fm);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;}
+.s-title{font-size:clamp(30px,4vw,52px);font-weight:800;letter-spacing:-1.5px;line-height:1.05;margin-bottom:16px;}
+.s-title .it{font-family:var(--fi);font-style:italic;font-weight:400;}
+.s-sub{font-size:16px;color:var(--slate2);max-width:480px;line-height:1.8;margin-bottom:64px;}
 
 /* VALUE */
-.val-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border);border:1px solid var(--border);border-radius:20px;overflow:hidden;max-width:1120px;margin:0 auto;}
+.val-sec{padding:100px 52px;}
+.val-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border);border:1px solid var(--border);border-radius:20px;overflow:hidden;}
 .vc{background:var(--navy);padding:40px 36px;position:relative;overflow:hidden;transition:background .3s;}
-.vc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--vc,var(--eb));transform:scaleX(0);transform-origin:left;transition:transform .4s ease;}
+.vc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--vc,var(--blue));transform:scaleX(0);transform-origin:left;transition:transform .4s ease;}
 .vc:hover{background:rgba(255,255,255,.02);}
 .vc:hover::before{transform:scaleX(1);}
-.vc-icon{width:50px;height:50px;border-radius:12px;background:var(--vb,rgba(54,101,243,.1));border:1px solid var(--vbr,rgba(54,101,243,.2));display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:24px;}
-.vc-title{font-size:18px;font-weight:700;margin-bottom:10px;}
+.vc-icon{width:50px;height:50px;border-radius:12px;background:var(--vb,rgba(37,99,235,.1));border:1px solid var(--vbr,rgba(37,99,235,.2));display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:24px;}
+.vc-title{font-size:18px;font-weight:700;letter-spacing:-.3px;margin-bottom:10px;}
 .vc-desc{font-size:14px;color:var(--slate2);line-height:1.8;}
-.vc-pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:11px;color:var(--vc,var(--eb));background:var(--vb,rgba(54,101,243,.1));border:1px solid var(--vbr,rgba(54,101,243,.2));padding:4px 11px;border-radius:20px;margin-top:18px;letter-spacing:.04em;}
+.vc-pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:11px;color:var(--vc,var(--blue));background:var(--vb,rgba(37,99,235,.1));border:1px solid var(--vbr,rgba(37,99,235,.2));padding:4px 11px;border-radius:20px;margin-top:18px;letter-spacing:.04em;}
 
 /* COMPARE */
-.cmp-sec{background:rgba(255,255,255,.012);}
+.cmp-sec{padding:80px 52px;background:rgba(255,255,255,.012);}
 .cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:960px;margin:56px auto 0;}
 .cc{border-radius:16px;padding:32px;border:1px solid;}
-.cc-bad{background:rgba(229,50,56,.04);border-color:rgba(229,50,56,.18);}
-.cc-good{background:rgba(134,184,23,.04);border-color:rgba(134,184,23,.18);}
-.cc-head{margin-bottom:24px;}
+.cc-bad{background:rgba(239,68,68,.04);border-color:rgba(239,68,68,.18);}
+.cc-good{background:rgba(16,185,129,.04);border-color:rgba(16,185,129,.18);}
+.cc-head{display:flex;align-items:center;gap:10px;margin-bottom:24px;}
 .cc-tag{font-family:var(--fm);font-size:11px;font-weight:500;padding:4px 12px;border-radius:20px;letter-spacing:.06em;text-transform:uppercase;}
-.cc-bad .cc-tag{background:rgba(229,50,56,.1);color:#f87171;border:1px solid rgba(229,50,56,.2);}
-.cc-good .cc-tag{background:rgba(134,184,23,.1);color:var(--green);border:1px solid rgba(134,184,23,.2);}
+.cc-bad .cc-tag{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.2);}
+.cc-good .cc-tag{background:rgba(16,185,129,.1);color:#34d399;border:1px solid rgba(16,185,129,.2);}
 .cc-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:14px;color:var(--slate2);line-height:1.5;}
 .cc-item:last-child{border-bottom:none;}
 .cc-item em{font-style:normal;font-size:16px;flex-shrink:0;margin-top:1px;}
 
 /* DEMO */
-.demo-sec{position:relative;}
-.demo-sec::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(54,101,243,.055),transparent 70%);pointer-events:none;}
+.demo-sec{padding:100px 52px;position:relative;}
+.demo-sec::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(37,99,235,.055) 0%,transparent 70%);pointer-events:none;}
 .demo-wrap{background:var(--navy2);border:1px solid var(--border);border-radius:20px;overflow:hidden;max-width:1100px;margin:56px auto 0;box-shadow:0 40px 100px rgba(0,0,0,.5);}
 .demo-bar{padding:14px 20px;background:rgba(255,255,255,.025);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
 .dbar-dots{display:flex;gap:6px;}
@@ -130,14 +123,14 @@ section{padding:100px 52px;}
 .d-left{padding:32px;border-right:1px solid var(--border);}
 .d-right{padding:32px;}
 .d-label{font-family:var(--fm);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin-bottom:16px;}
-.d-input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:#fff;font-family:var(--f);font-size:15px;padding:12px 16px;outline:none;transition:all .2s;margin-bottom:10px;}
-.d-input:focus{border-color:rgba(54,101,243,.5);background:rgba(54,101,243,.04);}
+.d-input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:#fff;font-family:var(--f);font-size:15px;font-weight:500;padding:12px 16px;outline:none;transition:all .2s;margin-bottom:10px;}
+.d-input:focus{border-color:rgba(37,99,235,.5);background:rgba(37,99,235,.04);}
 .d-input::placeholder{color:var(--slate);}
 .d-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px;}
 .d-chip{font-family:var(--fm);font-size:10px;padding:4px 11px;border:1px solid var(--border);border-radius:20px;color:var(--slate2);background:none;cursor:pointer;transition:all .2s;}
-.d-chip:hover{border-color:rgba(54,101,243,.45);color:var(--eb);background:rgba(54,101,243,.07);}
-.d-gen-btn{width:100%;padding:13px;border-radius:10px;background:linear-gradient(135deg,var(--eb),var(--cyan));color:#fff;border:none;cursor:pointer;font-family:var(--f);font-size:15px;font-weight:700;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 24px var(--glow);}
-.d-gen-btn:hover:not(:disabled){transform:translateY(-1px);}
+.d-chip:hover{border-color:rgba(37,99,235,.45);color:var(--blue3);background:rgba(37,99,235,.07);}
+.d-gen-btn{width:100%;padding:13px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--blue3));color:#fff;border:none;cursor:pointer;font-family:var(--f);font-size:15px;font-weight:700;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 24px var(--glow);}
+.d-gen-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 36px var(--glow);}
 .d-gen-btn:disabled{opacity:.45;cursor:not-allowed;}
 .d-spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite;display:none;}
 @keyframes sp{to{transform:rotate(360deg)}}
@@ -150,59 +143,60 @@ section{padding:100px 52px;}
 .d-out.show{display:block;}
 @keyframes fu{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
 .do-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
-.do-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:10px;color:var(--green);background:rgba(134,184,23,.09);border:1px solid rgba(134,184,23,.22);padding:4px 11px;border-radius:20px;letter-spacing:.06em;}
-.do-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);}
+.do-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:10px;color:#34d399;background:rgba(16,185,129,.09);border:1px solid rgba(16,185,129,.22);padding:4px 11px;border-radius:20px;letter-spacing:.06em;}
+.do-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:#34d399;}
 .do-time{font-family:var(--fm);font-size:10px;color:var(--slate);}
 .do-f{margin-bottom:15px;}
 .do-k{font-family:var(--fm);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin-bottom:4px;}
 .do-v{font-size:14px;color:#fff;font-weight:500;line-height:1.5;}
-.do-price{color:var(--green)!important;font-size:22px!important;font-weight:800!important;letter-spacing:-1px!important;}
+.do-price{color:#34d399!important;font-size:22px!important;font-weight:800!important;letter-spacing:-1px!important;}
 .do-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px;}
 .do-tag{font-family:var(--fm);font-size:10px;background:rgba(255,255,255,.04);border:1px solid var(--border);padding:2px 8px;border-radius:5px;color:var(--slate2);}
-.do-cta{display:block;width:100%;text-align:center;padding:12px;background:linear-gradient(135deg,var(--eb),var(--cyan));color:#fff;font-weight:700;font-size:14px;border:none;border-radius:10px;cursor:pointer;margin-top:20px;transition:all .2s;}
-.do-cta:hover{transform:translateY(-1px);}
-.do-err{padding:13px;font-family:var(--fm);font-size:12px;color:#fca5a5;background:rgba(229,50,56,.07);border:1px solid rgba(229,50,56,.18);border-radius:9px;margin-top:12px;display:none;}
+.do-cta{display:block;width:100%;text-align:center;padding:12px;background:linear-gradient(135deg,var(--blue),var(--blue3));color:#fff;font-weight:700;font-size:14px;border:none;border-radius:10px;cursor:pointer;margin-top:20px;box-shadow:0 4px 20px var(--glow);transition:all .2s;}
+.do-cta:hover{transform:translateY(-1px);box-shadow:0 8px 32px var(--glow);}
+.do-err{padding:13px 15px;font-family:var(--fm);font-size:12px;color:#fca5a5;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);border-radius:9px;margin-top:12px;line-height:1.6;display:none;}
 
 /* HOW */
-.how-sec{background:rgba(255,255,255,.013);}
-.how-steps{display:grid;grid-template-columns:repeat(5,1fr);position:relative;margin-top:60px;max-width:1120px;margin-left:auto;margin-right:auto;}
-.how-steps::after{content:'';position:absolute;top:27px;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(54,101,243,.5),transparent);}
+.how-sec{padding:100px 52px;background:rgba(255,255,255,.013);}
+.how-steps{display:grid;grid-template-columns:repeat(5,1fr);position:relative;margin-top:60px;}
+.how-steps::after{content:'';position:absolute;top:27px;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(37,99,235,.4),transparent);}
 .hs{text-align:center;padding:0 14px;}
-.hs-num{width:54px;height:54px;border-radius:50%;background:var(--navy2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--eb);margin:0 auto 20px;position:relative;z-index:1;transition:all .3s;}
-.hs:hover .hs-num{background:var(--eb);border-color:var(--eb);color:#fff;transform:scale(1.1);box-shadow:0 0 28px var(--glow);}
-.hs-t{font-size:14px;font-weight:700;margin-bottom:5px;}
+.hs-num{width:54px;height:54px;border-radius:50%;background:var(--navy2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--blue3);margin:0 auto 20px;position:relative;z-index:1;transition:all .3s;}
+.hs:hover .hs-num{background:var(--blue);border-color:var(--blue);color:#fff;transform:scale(1.1);box-shadow:0 0 28px var(--glow);}
+.hs-t{font-size:14px;font-weight:700;margin-bottom:5px;letter-spacing:-.2px;}
 .hs-s{font-family:var(--fm);font-size:11px;color:var(--slate2);line-height:1.6;}
 
 /* FEATURES */
-.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:60px;max-width:1120px;margin-left:auto;margin-right:auto;}
+.feat-sec{padding:100px 52px;}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:60px;}
 .fc{background:var(--navy2);border:1px solid var(--border);border-radius:16px;padding:32px;transition:all .3s;position:relative;overflow:hidden;}
-.fc::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;background:var(--fc,var(--eb));transform:scaleY(0);transform-origin:top;transition:transform .4s ease;}
+.fc::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;background:var(--fc,var(--blue));transform:scaleY(0);transform-origin:top;transition:transform .4s ease;}
 .fc:hover{border-color:rgba(255,255,255,.12);transform:translateY(-3px);box-shadow:0 20px 60px rgba(0,0,0,.3);}
 .fc:hover::before{transform:scaleY(1);}
 .fc-icon{font-size:28px;margin-bottom:16px;}
-.fc-title{font-size:17px;font-weight:700;margin-bottom:8px;}
+.fc-title{font-size:17px;font-weight:700;letter-spacing:-.3px;margin-bottom:8px;}
 .fc-desc{font-size:14px;color:var(--slate2);line-height:1.8;}
-.fc-new{display:inline-block;font-family:var(--fm);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);background:rgba(245,175,2,.1);border:1px solid rgba(245,175,2,.25);padding:2px 8px;border-radius:4px;margin-left:8px;vertical-align:middle;}
+.fc-new{display:inline-block;font-family:var(--fm);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);padding:2px 8px;border-radius:4px;margin-left:8px;vertical-align:middle;}
 
 /* TESTIMONIALS */
-.testi-sec{background:rgba(255,255,255,.013);}
-.t-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px;max-width:1120px;margin-left:auto;margin-right:auto;}
+.testi-sec{padding:100px 52px;background:rgba(255,255,255,.013);}
+.t-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px;}
 .tc{background:var(--navy2);border:1px solid var(--border);border-radius:16px;padding:28px;}
 .tc-stars{display:flex;gap:3px;color:var(--amber);font-size:14px;margin-bottom:14px;}
 .tc-body{font-size:14px;color:var(--slate2);line-height:1.85;font-style:italic;margin-bottom:20px;}
 .tc-body strong{color:#fff;font-style:normal;}
 .tc-auth{display:flex;align-items:center;gap:12px;}
-.tc-av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--eb),var(--cyan));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
+.tc-av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
 .tc-name{font-size:14px;font-weight:700;}
 .tc-role{font-family:var(--fm);font-size:11px;color:var(--slate);}
 
 /* PRICING */
-.price-sec{text-align:center;}
-.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1000px;margin:56px auto 0;text-align:left;}
+.price-sec{padding:100px 52px;text-align:center;}
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:960px;margin:56px auto 0;text-align:left;}
 .pc{background:var(--navy2);border:1px solid var(--border);border-radius:20px;padding:36px 32px;transition:all .3s;position:relative;}
-.pc.feat{background:linear-gradient(150deg,rgba(54,101,243,.18),rgba(6,182,212,.08));border-color:rgba(54,101,243,.45);box-shadow:0 0 0 1px rgba(54,101,243,.25),0 40px 90px rgba(54,101,243,.12);}
+.pc.feat{background:linear-gradient(150deg,rgba(37,99,235,.18),rgba(59,130,246,.08));border-color:rgba(37,99,235,.45);box-shadow:0 0 0 1px rgba(37,99,235,.25),0 40px 90px rgba(37,99,235,.12);}
 .pc:hover:not(.feat){border-color:rgba(255,255,255,.12);transform:translateY(-3px);}
-.pc-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--eb),var(--cyan));color:#fff;font-family:var(--fm);font-size:10px;font-weight:600;padding:5px 16px;border-radius:20px;letter-spacing:.06em;white-space:nowrap;}
+.pc-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--blue),var(--blue3));color:#fff;font-family:var(--fm);font-size:10px;font-weight:600;padding:5px 16px;border-radius:20px;letter-spacing:.06em;white-space:nowrap;}
 .pc-plan{font-family:var(--fm);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);margin-bottom:8px;}
 .pc-name{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px;}
 .pc-desc{font-size:13px;color:var(--slate2);margin-bottom:24px;line-height:1.6;}
@@ -217,47 +211,25 @@ section{padding:100px 52px;}
 .pc-feats li .ci{width:16px;height:16px;flex-shrink:0;margin-top:2px;}
 .pc-feats li.dim{opacity:.45;}
 .pc-btn{display:block;width:100%;text-align:center;padding:13px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .2s;text-decoration:none;}
-.pc-btn.solid{background:linear-gradient(135deg,var(--eb),var(--cyan));color:#fff;box-shadow:0 4px 24px var(--glow);}
-.pc-btn.solid:hover{transform:translateY(-1px);}
+.pc-btn.solid{background:linear-gradient(135deg,var(--blue),var(--blue3));color:#fff;box-shadow:0 4px 24px var(--glow);}
+.pc-btn.solid:hover{transform:translateY(-1px);box-shadow:0 8px 36px var(--glow);}
 .pc-btn.out{background:none;border:1px solid var(--border);color:var(--slate2);}
 .pc-btn.out:hover{border-color:rgba(255,255,255,.2);color:#fff;}
 .price-note{font-family:var(--fm);font-size:11px;color:var(--slate);margin-top:32px;letter-spacing:.03em;}
-.chk{display:block;width:14px;height:14px;color:var(--green);flex-shrink:0;}
-.xmk{display:block;width:14px;height:14px;color:var(--slate);flex-shrink:0;}
 
-/* CTA */
-.cta-sec{text-align:center;position:relative;overflow:hidden;}
-.cta-sec::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 80% at 50% 50%,rgba(54,101,243,.1),transparent 70%);pointer-events:none;}
+/* CTA BOTTOM */
+.cta-sec{padding:100px 52px;text-align:center;position:relative;overflow:hidden;}
+.cta-sec::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 80% at 50% 50%,rgba(37,99,235,.1) 0%,transparent 70%);pointer-events:none;}
 .cta-sec h2{font-size:clamp(36px,5vw,64px);font-weight:800;letter-spacing:-2px;line-height:1.05;margin-bottom:18px;}
+.cta-sec h2 .it{font-family:var(--fi);font-style:italic;font-weight:400;color:var(--cyan);}
 .cta-sec p{font-size:17px;color:var(--slate2);max-width:480px;margin:0 auto 40px;line-height:1.8;}
 .cta-trust{display:flex;align-items:center;justify-content:center;gap:28px;flex-wrap:wrap;margin-top:28px;}
 .ti{display:flex;align-items:center;gap:7px;font-family:var(--fm);font-size:12px;color:var(--slate2);}
 .ti-check{width:14px;height:14px;color:var(--green);}
 
-/* CONTACT */
-.contact-sec{background:rgba(255,255,255,.013);border-top:1px solid var(--border);}
-.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;max-width:1000px;margin:56px auto 0;align-items:start;}
-.contact-info h3{font-size:24px;font-weight:700;margin-bottom:16px;}
-.contact-info p{font-size:15px;color:var(--slate2);line-height:1.8;margin-bottom:28px;}
-.contact-detail{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
-.cd-icon{width:40px;height:40px;border-radius:10px;background:rgba(54,101,243,.1);border:1px solid rgba(54,101,243,.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
-.cd-text{font-size:14px;color:var(--slate2);}
-.cd-text strong{color:#fff;display:block;font-size:15px;}
-.contact-form{background:var(--navy2);border:1px solid var(--border);border-radius:16px;padding:32px;}
-.cf-field{margin-bottom:18px;}
-.cf-label{display:block;font-family:var(--fm);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);margin-bottom:8px;}
-.cf-input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:9px;color:#fff;font-family:var(--f);font-size:14px;padding:11px 14px;outline:none;transition:all .2s;}
-.cf-input:focus{border-color:rgba(54,101,243,.5);background:rgba(54,101,243,.04);}
-.cf-input::placeholder{color:var(--slate);}
-textarea.cf-input{min-height:120px;resize:vertical;line-height:1.6;}
-.cf-btn{width:100%;padding:13px;border-radius:10px;background:linear-gradient(135deg,var(--eb),var(--cyan));color:#fff;font-size:15px;font-weight:700;border:none;cursor:pointer;transition:all .2s;}
-.cf-btn:hover{transform:translateY(-1px);}
-.cf-msg{margin-top:12px;font-family:var(--fm);font-size:12px;padding:10px 14px;border-radius:8px;display:none;line-height:1.6;}
-.cf-msg.ok{display:block;background:rgba(134,184,23,.08);color:var(--green);border:1px solid rgba(134,184,23,.22);}
-.cf-msg.err{display:block;background:rgba(229,50,56,.07);color:#f87171;border:1px solid rgba(229,50,56,.2);}
-
 /* FOOTER */
 footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px;}
+.fl{font-size:18px;font-weight:800;color:#fff;text-decoration:none;display:flex;align-items:center;gap:9px;}
 .f-links{display:flex;gap:22px;list-style:none;}
 .f-links a{font-family:var(--fm);font-size:12px;color:var(--slate);text-decoration:none;transition:color .2s;}
 .f-links a:hover{color:var(--slate2);}
@@ -272,36 +244,43 @@ footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-i
 .modal-x:hover{background:rgba(255,255,255,.1);color:#fff;}
 .m-tabs{display:flex;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:4px;gap:3px;margin-bottom:22px;}
 .m-tab{flex:1;padding:9px;text-align:center;font-size:14px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--slate);border-radius:7px;transition:all .2s;}
-.m-tab.active{background:var(--eb);color:#fff;}
-.m-free{background:rgba(134,184,23,.08);border:1px solid rgba(134,184,23,.22);border-radius:10px;padding:13px 16px;margin-bottom:20px;display:flex;gap:10px;align-items:flex-start;}
-.m-free-text{font-size:13px;color:#86d966;line-height:1.65;}
+.m-tab.active{background:var(--blue);color:#fff;}
+.m-free{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.22);border-radius:10px;padding:13px 16px;margin-bottom:20px;display:flex;gap:10px;align-items:flex-start;}
+.m-free-text{font-size:13px;color:#34d399;line-height:1.65;}
 .m-free-text strong{font-weight:700;}
 .mf{margin-bottom:16px;}
-.mf label{display:block;font-family:var(--fm);font-size:11px;color:var(--slate);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;}
+.mf label{display:block;font-family:var(--fm);font-size:11px;font-weight:500;color:var(--slate);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;}
 .mf input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:9px;color:#fff;font-family:var(--f);font-size:15px;padding:11px 14px;outline:none;transition:all .2s;}
-.mf input:focus{border-color:rgba(54,101,243,.5);background:rgba(54,101,243,.04);}
+.mf input:focus{border-color:rgba(37,99,235,.5);background:rgba(37,99,235,.04);}
 .mf input::placeholder{color:var(--slate);}
-.m-submit{width:100%;padding:13px;border-radius:10px;background:linear-gradient(135deg,var(--eb),var(--cyan));color:#fff;font-size:15px;font-weight:700;border:none;cursor:pointer;transition:all .2s;}
-.m-submit:hover{transform:translateY(-1px);}
+.m-submit{width:100%;padding:13px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--blue3));color:#fff;font-size:15px;font-weight:700;border:none;cursor:pointer;box-shadow:0 4px 24px var(--glow);transition:all .2s;}
+.m-submit:hover{transform:translateY(-1px);box-shadow:0 8px 36px var(--glow);}
 .m-msg{font-family:var(--fm);font-size:12px;padding:10px 14px;border-radius:8px;margin-top:10px;display:none;line-height:1.6;}
-.m-msg.ok{background:rgba(134,184,23,.08);color:var(--green);border:1px solid rgba(134,184,23,.22);display:block;}
-.m-msg.err{background:rgba(229,50,56,.07);color:#f87171;border:1px solid rgba(229,50,56,.2);display:block;}
+.m-msg.ok{background:rgba(16,185,129,.08);color:#34d399;border:1px solid rgba(16,185,129,.22);display:block;}
+.m-msg.err{background:rgba(239,68,68,.07);color:#f87171;border:1px solid rgba(239,68,68,.2);display:block;}
 .m-terms{font-family:var(--fm);font-size:10px;color:var(--slate);text-align:center;margin-top:12px;line-height:1.7;}
 
+/* ANIM */
 .fade-up{opacity:0;transform:translateY(26px);transition:opacity .65s ease,transform .65s ease;}
 .fade-up.visible{opacity:1;transform:none;}
 .fade-up:nth-child(2){transition-delay:.1s;}.fade-up:nth-child(3){transition-delay:.2s;}.fade-up:nth-child(4){transition-delay:.3s;}
 
+/* SVG CHECK */
+.chk{display:block;width:14px;height:14px;color:var(--green);flex-shrink:0;}
+.xmk{display:block;width:14px;height:14px;color:var(--slate);flex-shrink:0;}
+
 @media(max-width:960px){
-  nav{padding:0 16px;}nav ul{display:none;}
-  .hero,.cmp-sec,.demo-sec,.how-sec,.feat-sec,.testi-sec,.price-sec,.cta-sec,.contact-sec,section{padding-left:16px;padding-right:16px;}
+  nav{padding:0 16px;}
+  nav ul{display:none;}
+  .hero,.val-sec,.cmp-sec,.demo-sec,.how-sec,.feat-sec,.testi-sec,.price-sec,.cta-sec{padding-left:16px;padding-right:16px;}
   .hero{padding-top:108px;}
   .hero h1{font-size:42px;letter-spacing:-1.5px;}
-  .val-grid,.feat-grid,.t-grid,.price-grid,.cmp-grid,.contact-grid{grid-template-columns:1fr;}
+  .val-grid,.feat-grid,.t-grid,.price-grid,.cmp-grid{grid-template-columns:1fr;}
   .demo-inner{grid-template-columns:1fr;}
   .d-left{border-right:none;border-bottom:1px solid var(--border);}
   .how-steps{grid-template-columns:1fr 1fr;gap:24px;}
   .how-steps::after{display:none;}
+  .h-metrics{flex-wrap:wrap;}
   footer{flex-direction:column;text-align:center;}
   .f-links{flex-wrap:wrap;justify-content:center;}
 }
@@ -310,18 +289,17 @@ footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-i
 <body>
 
 <nav>
-  <a href="#" class="logo">
-  
-    <span class="logo-text"><span class="li">EbayList</span><span class="ai">AI</span></span>
+  <a href="index.html" class="logo">
+    <div class="logo-icon">L</div>
+    <span class="logo-text">List<span>AI</span></span>
   </a>
   <ul>
     <li><a href="#how">How it works</a></li>
     <li><a href="#features">Features</a></li>
     <li><a href="#demo">Live demo</a></li>
     <li><a href="#pricing">Pricing</a></li>
-    <li><a href="#contact">Contact</a></li>
   </ul>
-  <div class="nav-r">
+  <div class="nav-r" id="nav-r">
     <a href="#" class="btn-ghost" onclick="openAuth('login');return false;">Log in</a>
     <a href="#" class="btn-cta" onclick="openAuth('signup');return false;">Start free — 5 listings</a>
   </div>
@@ -329,70 +307,98 @@ footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-i
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-orb orb1"></div>
-  <div class="hero-orb orb2"></div>
-  <div class="hero-orb orb3"></div>
-  <div class="hero-grid"></div>
-  <div class="particle" style="left:8%;width:3px;height:3px;animation-duration:12s;animation-delay:0s;background:var(--eb);"></div>
-  <div class="particle" style="left:22%;width:5px;height:5px;animation-duration:15s;animation-delay:-3s;background:var(--cyan);"></div>
-  <div class="particle" style="left:38%;width:2px;height:2px;animation-duration:10s;animation-delay:-6s;background:var(--green);"></div>
-  <div class="particle" style="left:58%;width:4px;height:4px;animation-duration:14s;animation-delay:-1s;background:var(--eb);"></div>
-  <div class="particle" style="left:74%;width:3px;height:3px;animation-duration:11s;animation-delay:-8s;background:var(--amber);"></div>
-  <div class="particle" style="left:87%;width:5px;height:5px;animation-duration:16s;animation-delay:-4s;background:var(--cyan);"></div>
-  <div class="hero-3d-card">
-    <div class="hc-badge">AI Generated in 4.2s</div>
-    <div class="hc-title">Sony WH-1000XM5 Wireless Noise Canceling Headphones Black Excellent</div>
-    <div class="hc-price">$249.99</div>
-    <div class="hc-tags"><span class="hc-tag">Electronics</span><span class="hc-tag">Sony</span><span class="hc-tag">Like New</span></div>
-    <button class="hc-btn">Publish to eBay →</button>
+  <div class="h-mesh"></div><div class="h-grid"></div>
+  <div class="h-eyebrow"><div class="h-dot"></div>Trusted by 1,200+ eBay sellers worldwide</div>
+  <h1><span class="gr">Sell more on eBay.</span><br>Write <span class="it">zero</span> listings<br><span class="gr">by hand.</span></h1>
+  <p class="h-sub">ListAI writes <strong>keyword-optimised titles, descriptions, and item specifics</strong> using AI — then publishes to eBay automatically. More visibility. More sales. Hours saved.</p>
+  <div class="h-social">
+    <div class="h-avatars"><div class="av">JT</div><div class="av">SR</div><div class="av">MK</div><div class="av">AL</div><div class="av">+</div></div>
+    <div>
+      <div class="h-stars">★★★★★</div>
+      <div class="h-social-text"><strong>1,200+ sellers</strong> listing faster every day</div>
+    </div>
   </div>
-  <div class="hero-content">
-    <div class="h-eyebrow"><div class="h-dot"></div>Trusted by 1,200+ eBay sellers worldwide</div>
-    <h1><span class="h-gr">Sell more on eBay.</span><br>Write <span class="h-ai">zero</span> listings<br><span class="h-gr">by hand.</span></h1>
-    <p class="h-sub"><span style="color:var(--eb);font-weight:700;">ListAI</span> writes <strong>keyword-optimised titles, descriptions, and item specifics</strong> using AI — then publishes to eBay automatically. More visibility. More sales. Hours saved.</p>
-    <div class="h-social">
-      <div class="h-avatars"><div class="av">JT</div><div class="av">SR</div><div class="av">MK</div><div class="av">AL</div><div class="av">+</div></div>
-      <div><div class="h-stars">★★★★★</div><div class="h-social-text"><strong>1,200+ sellers</strong> listing faster every day</div></div>
-    </div>
-    <div class="h-btns">
-      <button class="btn-hero" onclick="openAuth('signup')">Start free — no card needed<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-      <a href="#demo" class="btn-hero2"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M6.5 5.5l4 2.5-4 2.5V5.5z" fill="currentColor"/></svg>Watch it generate a listing</a>
-    </div>
-    <div class="h-metrics">
-      <div class="hm"><div class="hm-n">30<em>s</em></div><div class="hm-l">Per listing avg</div></div>
-      <div class="hm"><div class="hm-n">3<em>×</em></div><div class="hm-l">More search clicks</div></div>
-      <div class="hm"><div class="hm-n">89<em>%</em></div><div class="hm-l">Time saved</div></div>
-      <div class="hm"><div class="hm-n">$0</div><div class="hm-l">To start today</div></div>
-    </div>
+  <div class="h-btns">
+    <button class="btn-hero" onclick="openAuth('signup')">Start free — no card needed<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <a href="#demo" class="btn-hero2"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M6.5 5.5l4 2.5-4 2.5V5.5z" fill="currentColor"/></svg>Watch it generate a listing</a>
+  </div>
+  <div class="h-metrics">
+    <div class="hm"><div class="hm-n">30<em>s</em></div><div class="hm-l">Per listing avg</div></div>
+    <div class="hm"><div class="hm-n">3<em>×</em></div><div class="hm-l">More search clicks</div></div>
+    <div class="hm"><div class="hm-n">89<em>%</em></div><div class="hm-l">Time saved</div></div>
+    <div class="hm"><div class="hm-n">$0</div><div class="hm-l">To start today</div></div>
   </div>
 </section>
 
 <!-- VALUE -->
 <section class="val-sec">
-  <div class="s-eye">Why <span style="color:var(--eb);">ListAI</span></div>
-  <h2 class="s-title">AI listings don't just save time — they <em style="font-style:italic;color:var(--cyan);">sell more.</em></h2>
-  <p class="s-sub">Manual listings miss keywords, get categories wrong, and skip item specifics. <span style="color:var(--eb);font-weight:600;">ListAI</span> fixes all three — automatically.</p>
+  <div class="s-eye">Why ListAI</div>
+  <h2 class="s-title">AI listings don't just<br>save time — they <span class="it">sell more.</span></h2>
+  <p class="s-sub">Manual listings miss keywords, get categories wrong, and skip item specifics. ListAI fixes all three — automatically.</p>
   <div class="val-grid">
-    <div class="vc fade-up" style="--vc:#3665F3;--vb:rgba(54,101,243,.1);--vbr:rgba(54,101,243,.2);"><div class="vc-icon">📈</div><div class="vc-title">More Sales</div><div class="vc-desc">AI-optimised titles include the exact keywords buyers type into eBay search. Sellers using <span style="color:var(--eb);font-weight:600;">ListAI</span> report 3× higher click-through rates compared to hand-written listings.</div><div class="vc-pill">↑ 3× more clicks on average</div></div>
-    <div class="vc fade-up" style="--vc:#86B817;--vb:rgba(134,184,23,.1);--vbr:rgba(134,184,23,.2);"><div class="vc-icon">⚡</div><div class="vc-title">Saves Hours Every Week</div><div class="vc-desc">What takes 15 minutes per listing manually takes 30 seconds with <span style="color:var(--eb);font-weight:600;">ListAI</span>. Upload 100 products via CSV and have them all live on eBay before lunch. That's 24 hours of work in 5 minutes.</div><div class="vc-pill">⏱ 89% less time per listing</div></div>
-    <div class="vc fade-up" style="--vc:#F5AF02;--vb:rgba(245,175,2,.1);--vbr:rgba(245,175,2,.2);"><div class="vc-icon">🎯</div><div class="vc-title">Gets Categories Right</div><div class="vc-desc">Wrong categories mean eBay buries your listings. <span style="color:var(--eb);font-weight:600;">ListAI</span> selects from eBay's complete US category tree and auto-fills every required item specific — Brand, MPN, Size, Material, and more.</div><div class="vc-pill">✓ Every required field completed</div></div>
+    <div class="vc fade-up" style="--vc:#3b82f6;--vb:rgba(59,130,246,.1);--vbr:rgba(59,130,246,.2);">
+      <div class="vc-icon">📈</div>
+      <div class="vc-title">More Sales</div>
+      <div class="vc-desc">AI-optimised titles include the exact keywords buyers type into eBay search. Sellers using ListAI report 3× higher click-through rates compared to hand-written listings.</div>
+      <div class="vc-pill">↑ 3× more clicks on average</div>
+    </div>
+    <div class="vc fade-up" style="--vc:#10b981;--vb:rgba(16,185,129,.1);--vbr:rgba(16,185,129,.2);">
+      <div class="vc-icon">⚡</div>
+      <div class="vc-title">Saves Hours Every Week</div>
+      <div class="vc-desc">What takes 15 minutes per listing manually takes 30 seconds with ListAI. Upload 100 products via CSV and have them all live on eBay before lunch. That's 24 hours of work in 5 minutes.</div>
+      <div class="vc-pill">⏱ 89% less time per listing</div>
+    </div>
+    <div class="vc fade-up" style="--vc:#f59e0b;--vb:rgba(245,158,11,.1);--vbr:rgba(245,158,11,.2);">
+      <div class="vc-icon">🎯</div>
+      <div class="vc-title">Gets Categories Right</div>
+      <div class="vc-desc">Wrong categories mean eBay buries your listings. ListAI selects from eBay's complete US category tree and auto-fills every required item specific — Brand, MPN, Size, Material, and more.</div>
+      <div class="vc-pill">✓ Every required field completed</div>
+    </div>
   </div>
 </section>
 
 <!-- COMPARE -->
 <section class="cmp-sec">
-  <div style="text-align:center;"><div class="s-eye">The difference</div><h2 class="s-title">Listing on eBay <em style="font-style:italic;color:var(--cyan);">before</em> and after <span style="color:var(--eb);">ListAI</span></h2></div>
+  <div style="text-align:center;">
+    <div class="s-eye">The difference</div>
+    <h2 class="s-title">Listing on eBay <span class="it">before</span><br>and after ListAI</h2>
+  </div>
   <div class="cmp-grid">
-    <div class="cc cc-bad"><div class="cc-head"><span class="cc-tag">Before ListAI — Manual listing</span></div><div class="cc-item"><em>😩</em>15–30 minutes writing each listing by hand</div><div class="cc-item"><em>❌</em>Generic titles that miss buyer search terms</div><div class="cc-item"><em>❌</em>Item specifics left blank or filled incorrectly</div><div class="cc-item"><em>❌</em>Wrong category — eBay buries the listing</div><div class="cc-item"><em>❌</em>Copy-pasting between tabs and windows all day</div><div class="cc-item"><em>❌</em>One listing at a time, no bulk option</div><div class="cc-item"><em>💸</em>Low visibility, fewer clicks, fewer sales</div></div>
-    <div class="cc cc-good"><div class="cc-head"><span class="cc-tag">After ListAI — AI-powered</span></div><div class="cc-item"><em>⚡</em>30 seconds per listing, published automatically</div><div class="cc-item"><em>✅</em>Keyword-rich titles buyers actually search for</div><div class="cc-item"><em>✅</em>Every item specific filled from the category template</div><div class="cc-item"><em>✅</em>Correct category from eBay's full US tree</div><div class="cc-item"><em>✅</em>CSV upload — 100 products live in minutes</div><div class="cc-item"><em>✅</em>Regenerate any field with one click</div><div class="cc-item"><em>💰</em>More visibility, more clicks, more revenue</div></div>
+    <div class="cc cc-bad">
+      <div class="cc-head"><span class="cc-tag">Before ListAI — Manual listing</span></div>
+      <div class="cc-item"><em>😩</em>15–30 minutes writing each listing by hand</div>
+      <div class="cc-item"><em>❌</em>Generic titles that miss buyer search terms</div>
+      <div class="cc-item"><em>❌</em>Item specifics left blank or filled incorrectly</div>
+      <div class="cc-item"><em>❌</em>Wrong category — eBay buries the listing</div>
+      <div class="cc-item"><em>❌</em>Copy-pasting between tabs and windows all day</div>
+      <div class="cc-item"><em>❌</em>One listing at a time, no bulk option</div>
+      <div class="cc-item"><em>💸</em>Low visibility, fewer clicks, fewer sales</div>
+    </div>
+    <div class="cc cc-good">
+      <div class="cc-head"><span class="cc-tag">After ListAI — AI-powered</span></div>
+      <div class="cc-item"><em>⚡</em>30 seconds per listing, published automatically</div>
+      <div class="cc-item"><em>✅</em>Keyword-rich titles buyers actually search for</div>
+      <div class="cc-item"><em>✅</em>Every item specific filled from the category template</div>
+      <div class="cc-item"><em>✅</em>Correct category from eBay's full US tree</div>
+      <div class="cc-item"><em>✅</em>CSV upload — 100 products live in minutes</div>
+      <div class="cc-item"><em>✅</em>Regenerate any field with one click</div>
+      <div class="cc-item"><em>💰</em>More visibility, more clicks, more revenue</div>
+    </div>
   </div>
 </section>
 
 <!-- DEMO -->
 <section id="demo" class="demo-sec">
-  <div style="text-align:center;"><div class="s-eye">Live demo</div><h2 class="s-title">Generate a real listing.<br><em style="font-style:italic;color:var(--cyan);">Right now. No sign-up.</em></h2><p class="s-sub">Type any product. Watch <span style="color:var(--eb);font-weight:600;">ListAI</span> generate a full eBay-ready listing using AI — completely free to try.</p></div>
+  <div style="text-align:center;">
+    <div class="s-eye">Live demo</div>
+    <h2 class="s-title">Generate a real listing.<br><span class="it">Right now. No sign-up.</span></h2>
+    <p class="s-sub" style="margin:0 auto 0;text-align:center;">Type any product. Watch ListAI generate a full eBay-ready listing using Groq AI — completely free to try.</p>
+  </div>
   <div class="demo-wrap">
-    <div class="demo-bar"><div class="dbar-dots"><div class="dbd dbd-r"></div><div class="dbd dbd-y"></div><div class="dbd dbd-g"></div></div><div class="dbar-url">ebaylistai.vercel.app — AI Listing Generator</div></div>
+    <div class="demo-bar">
+      <div class="dbar-dots"><div class="dbd dbd-r"></div><div class="dbd dbd-y"></div><div class="dbd dbd-g"></div></div>
+      <div class="dbar-url">app.listai.io — AI Listing Generator</div>
+    </div>
     <div class="demo-inner">
       <div class="d-left">
         <div class="d-label">Step 1 — Enter your product</div>
@@ -405,14 +411,39 @@ footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-i
           <button class="d-chip" onclick="sd('Lego Star Wars Millennium Falcon 75192')">LEGO Falcon</button>
           <button class="d-chip" onclick="sd('Canon EOS 5D Mark IV DSLR camera')">Canon 5D IV</button>
         </div>
-        <button class="d-gen-btn" id="d-btn" onclick="runD()"><div class="d-spin"></div><span class="d-lbl">✦ Generate eBay listing</span></button>
-        <div class="d-note">3 free demos/hour · No sign-up required</div>
-        <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);"><div style="font-family:var(--fm);font-size:10px;color:var(--slate);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;">After sign-up you also get:</div><div style="display:flex;flex-direction:column;gap:9px;"><div style="display:flex;gap:9px;align-items:center;font-size:13px;color:var(--slate2);"><span style="color:var(--green);">✓</span>Regenerate any field with one click</div><div style="display:flex;gap:9px;align-items:center;font-size:13px;color:var(--slate2);"><span style="color:var(--green);">✓</span>Upload product images (up to 12 per listing)</div><div style="display:flex;gap:9px;align-items:center;font-size:13px;color:var(--slate2);"><span style="color:var(--green);">✓</span>Full eBay US category tree with item specifics</div><div style="display:flex;gap:9px;align-items:center;font-size:13px;color:var(--slate2);"><span style="color:var(--green);">✓</span>CSV bulk upload — up to 100 products at once</div><div style="display:flex;gap:9px;align-items:center;font-size:13px;color:var(--slate2);"><span style="color:var(--green);">✓</span>One-click publish to your eBay account</div></div></div>
+        <button class="d-gen-btn" id="d-btn" onclick="runD()">
+          <div class="d-spin"></div>
+          <span class="d-lbl">✦ Generate eBay listing</span>
+        </button>
+        <div class="d-note">3 free demos/hour · No sign-up · Powered by Groq AI (Llama 3.1 70B)</div>
+        <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
+          <div style="font-family:var(--fm);font-size:10px;color:var(--slate);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;">After sign-up you also get:</div>
+          <div style="display:flex;flex-direction:column;gap:9px;">
+            <div style="display:flex;gap:9px;align-items:center;font-size:13px;color:var(--slate2);"><span style="color:var(--green);">✓</span>Regenerate any field with one click</div>
+            <div style="display:flex;gap:9px;align-items:center;font-size:13px;color:var(--slate2);"><span style="color:var(--green);">✓</span>Upload product images (up to 12 per listing)</div>
+            <div style="display:flex;gap:9px;align-items:center;font-size:13px;color:var(--slate2);"><span style="color:var(--green);">✓</span>Full eBay US category tree with item specifics</div>
+            <div style="display:flex;gap:9px;align-items:center;font-size:13px;color:var(--slate2);"><span style="color:var(--green);">✓</span>CSV bulk upload — up to 100 products at once</div>
+            <div style="display:flex;gap:9px;align-items:center;font-size:13px;color:var(--slate2);"><span style="color:var(--green);">✓</span>One-click publish to your eBay account</div>
+          </div>
+        </div>
       </div>
       <div class="d-right">
         <div class="d-label">Step 2 — Review &amp; publish</div>
-        <div class="d-ph" id="d-ph"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="4" y="6" width="40" height="36" rx="5" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/><path d="M11 17h26M11 24h18M11 31h12" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-linecap="round"/></svg><p>Your AI-generated eBay listing<br>appears here. Type a product<br>and click Generate.</p></div>
-        <div class="d-out" id="d-out"><div class="do-top"><div class="do-badge">Listing generated by AI</div><div class="do-time" id="do-time"></div></div><div class="do-f"><div class="do-k">eBay Optimised Title (80 chars)</div><div class="do-v" id="do-title"></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"><div class="do-f"><div class="do-k">Category</div><div class="do-v" id="do-cat" style="font-size:12px;"></div></div><div class="do-f"><div class="do-k">Suggested Price</div><div class="do-v do-price" id="do-price"></div></div></div><div class="do-f"><div class="do-k">Description</div><div class="do-v" id="do-desc" style="font-size:13px;color:var(--slate2);"></div></div><div class="do-f"><div class="do-k">Item Specifics</div><div class="do-tags" id="do-tags"></div></div><button class="do-cta" onclick="openAuth('signup')">Sign up free to publish this listing to eBay →</button></div>
+        <div class="d-ph" id="d-ph">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="4" y="6" width="40" height="36" rx="5" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/><path d="M11 17h26M11 24h18M11 31h12" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <p>Your AI-generated eBay listing<br>appears here. Type a product<br>and click Generate.</p>
+        </div>
+        <div class="d-out" id="d-out">
+          <div class="do-top"><div class="do-badge">Listing generated by Groq AI</div><div class="do-time" id="do-time"></div></div>
+          <div class="do-f"><div class="do-k">eBay Optimised Title (80 chars)</div><div class="do-v" id="do-title"></div></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="do-f"><div class="do-k">Category</div><div class="do-v" id="do-cat" style="font-size:12px;"></div></div>
+            <div class="do-f"><div class="do-k">Suggested Price</div><div class="do-v do-price" id="do-price"></div></div>
+          </div>
+          <div class="do-f"><div class="do-k">Description</div><div class="do-v" id="do-desc" style="font-size:13px;color:var(--slate2);"></div></div>
+          <div class="do-f"><div class="do-k">Item Specifics</div><div class="do-tags" id="do-tags"></div></div>
+          <button class="do-cta" onclick="openAuth('signup')">Sign up free to publish this listing to eBay →</button>
+        </div>
         <div class="do-err" id="do-err"></div>
       </div>
     </div>
@@ -422,8 +453,8 @@ footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-i
 <!-- HOW -->
 <section id="how" class="how-sec">
   <div class="s-eye">The workflow</div>
-  <h2 class="s-title">Five steps. <em style="font-style:italic;color:var(--cyan);">Completely automatic.</em></h2>
-  <p class="s-sub">Connect your eBay once. Then just add products — <span style="color:var(--eb);font-weight:600;">ListAI</span> handles every step.</p>
+  <h2 class="s-title">Five steps.<br><span class="it">Completely automatic.</span></h2>
+  <p class="s-sub">Connect your eBay once. Then just add products — ListAI handles every step.</p>
   <div class="how-steps">
     <div class="hs fade-up"><div class="hs-num">1</div><div class="hs-t">Connect eBay</div><div class="hs-s">OAuth in 60 seconds. Sandbox for safe testing before going live.</div></div>
     <div class="hs fade-up"><div class="hs-num">2</div><div class="hs-t">Add products</div><div class="hs-s">Type a title, upload CSV, or drop product photos.</div></div>
@@ -436,33 +467,45 @@ footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-i
 <!-- FEATURES -->
 <section id="features" class="feat-sec">
   <div class="s-eye">Features</div>
-  <h2 class="s-title">Everything a serious eBay seller <em style="font-style:italic;color:var(--cyan);">actually needs.</em></h2>
+  <h2 class="s-title">Everything a serious<br>eBay seller <span class="it">actually needs.</span></h2>
   <div class="feat-grid">
-    <div class="fc fade-up" style="--fc:var(--eb)"><div class="fc-icon">🧠</div><div class="fc-title">AI Listing Generation</div><div class="fc-desc">Generates keyword-rich titles up to 80 chars, professional descriptions with specs and condition, and realistic price suggestions in under 3 seconds.</div></div>
-    <div class="fc fade-up" style="--fc:var(--green)"><div class="fc-icon">🔄</div><div class="fc-title">Regenerate Any Field <span class="fc-new">Popular</span></div><div class="fc-desc">Don't like the title? Click regenerate next to it. Every output field has its own regenerate button — you get a completely fresh AI response for just that field.</div></div>
-    <div class="fc fade-up" style="--fc:var(--cyan)"><div class="fc-icon">🗂️</div><div class="fc-title">Full eBay US Category Tree</div><div class="fc-desc">Every eBay US category available as a searchable multi-level dropdown. Select Electronics → Audio → Portable Players and <span style="color:var(--eb);font-weight:600;">ListAI</span> instantly shows the exact item specifics eBay requires.</div></div>
-    <div class="fc fade-up" style="--fc:var(--amber)"><div class="fc-icon">🖼️</div><div class="fc-title">Product Image Upload <span class="fc-new">Pro</span></div><div class="fc-desc">Upload up to 12 product photos per listing. Images attach directly to your eBay listing via the API. Drag to reorder. On Pro, AI reads your photos to auto-extract product details.</div></div>
-    <div class="fc fade-up" style="--fc:var(--eb)"><div class="fc-icon">📊</div><div class="fc-title">CSV Bulk Upload</div><div class="fc-desc">Upload a spreadsheet with 1 to 100 products at once. Any column headers work — Title, SKU, Condition, Notes — <span style="color:var(--eb);font-weight:600;">ListAI</span> maps them automatically. All listings generated in parallel.</div></div>
-    <div class="fc fade-up" style="--fc:var(--green)"><div class="fc-icon">📡</div><div class="fc-title">Live eBay Status Tracking</div><div class="fc-desc">Dashboard shows real-time status pulled directly from eBay: Active, Watching count, Sold, Ended, Failed. After every batch publish you get a full success/failure report with eBay item IDs.</div></div>
+    <div class="fc fade-up" style="--fc:var(--blue3)"><div class="fc-icon">🧠</div><div class="fc-title">AI Listing Generation</div><div class="fc-desc">Powered by Groq's Llama 3.1 70B model — completely free. Generates keyword-rich titles up to 80 chars, professional descriptions with specs and condition, and realistic price suggestions in under 3 seconds.</div></div>
+    <div class="fc fade-up" style="--fc:var(--green)"><div class="fc-icon">🔄</div><div class="fc-title">Regenerate Any Field <span class="fc-new">Popular</span></div><div class="fc-desc">Don't like the title? Click regenerate next to it. Want a different description angle? Regenerate. Every output field has its own regenerate button — you get a completely fresh AI response for just that field.</div></div>
+    <div class="fc fade-up" style="--fc:var(--cyan)"><div class="fc-icon">🗂️</div><div class="fc-title">Full eBay US Category Tree</div><div class="fc-desc">Every eBay US category available as a searchable multi-level dropdown. Select Electronics → Audio → Portable Players and ListAI instantly shows the exact item specifics eBay requires for that category.</div></div>
+    <div class="fc fade-up" style="--fc:var(--amber)"><div class="fc-icon">🖼️</div><div class="fc-title">Product Image Upload <span class="fc-new">Pro</span></div><div class="fc-desc">Upload up to 12 product photos per listing. Images attach directly to your eBay listing via the API. Drag to reorder. On Pro, AI reads your photos to auto-extract product details — brand, model, condition, features.</div></div>
+    <div class="fc fade-up" style="--fc:var(--blue3)"><div class="fc-icon">📊</div><div class="fc-title">CSV Bulk Upload</div><div class="fc-desc">Upload a spreadsheet with 1 to 100 products at once. Any column headers work — Title, SKU, Condition, Notes — ListAI maps them automatically. All listings generated in parallel and ready to review in under 2 minutes.</div></div>
+    <div class="fc fade-up" style="--fc:var(--green)"><div class="fc-icon">📡</div><div class="fc-title">Live eBay Status Tracking</div><div class="fc-desc">Dashboard shows real-time status pulled directly from eBay: Active, Watching count, Sold, Ended, Failed. After every batch publish you get a full success/failure report with eBay item IDs and live links.</div></div>
   </div>
 </section>
 
 <!-- TESTIMONIALS -->
 <section class="testi-sec">
   <div class="s-eye">What sellers say</div>
-  <h2 class="s-title">Real results from <em style="font-style:italic;color:var(--cyan);">real eBay sellers.</em></h2>
+  <h2 class="s-title">Real results from<br><span class="it">real eBay sellers.</span></h2>
   <div class="t-grid">
-    <div class="tc fade-up"><div class="tc-stars">★★★★★</div><div class="tc-body">"I used to spend 3 hours listing 20 products. Now I upload my CSV and <strong>everything is live on eBay in under 10 minutes.</strong> The titles are genuinely better than what I was writing myself — way more keywords."</div><div class="tc-auth"><div class="tc-av">JT</div><div><div class="tc-name">James T.</div><div class="tc-role">eBay Power Seller · 4,200+ feedback</div></div></div></div>
-    <div class="tc fade-up"><div class="tc-stars">★★★★★</div><div class="tc-body">"The category tree and item specifics is what sold me. <strong>ListAI fills in every required field automatically</strong> based on the category I pick. My listings rank much higher and I'm getting way more watchers."</div><div class="tc-auth"><div class="tc-av">SR</div><div><div class="tc-name">Sarah R.</div><div class="tc-role">Vintage clothing reseller · 1,800+ feedback</div></div></div></div>
-    <div class="tc fade-up"><div class="tc-stars">★★★★★</div><div class="tc-body">"The regenerate button is brilliant. If I don't like the first title, I click regenerate and get a completely different angle in 2 seconds. <strong>It's like having a professional eBay copywriter on tap</strong> for $29 a month."</div><div class="tc-auth"><div class="tc-av">MK</div><div><div class="tc-name">Mike K.</div><div class="tc-role">Electronics reseller · 900+ feedback</div></div></div></div>
+    <div class="tc fade-up">
+      <div class="tc-stars">★★★★★</div>
+      <div class="tc-body">"I used to spend 3 hours listing 20 products. Now I upload my CSV and <strong>everything is live on eBay in under 10 minutes.</strong> The titles are genuinely better than what I was writing myself — way more keywords."</div>
+      <div class="tc-auth"><div class="tc-av">JT</div><div><div class="tc-name">James T.</div><div class="tc-role">eBay Power Seller · 4,200+ feedback</div></div></div>
+    </div>
+    <div class="tc fade-up">
+      <div class="tc-stars">★★★★★</div>
+      <div class="tc-body">"The category tree and item specifics is what sold me. <strong>ListAI fills in every required field automatically</strong> based on the category I pick. My listings rank much higher and I'm getting way more watchers."</div>
+      <div class="tc-auth"><div class="tc-av">SR</div><div><div class="tc-name">Sarah R.</div><div class="tc-role">Vintage clothing reseller · 1,800+ feedback</div></div></div>
+    </div>
+    <div class="tc fade-up">
+      <div class="tc-stars">★★★★★</div>
+      <div class="tc-body">"The regenerate button is brilliant. If I don't like the first title, I click regenerate and get a completely different angle in 2 seconds. <strong>It's like having a professional eBay copywriter on tap</strong> for $29 a month."</div>
+      <div class="tc-auth"><div class="tc-av">MK</div><div><div class="tc-name">Mike K.</div><div class="tc-role">Electronics reseller · 900+ feedback</div></div></div>
+    </div>
   </div>
 </section>
 
 <!-- PRICING -->
 <section id="pricing" class="price-sec">
   <div class="s-eye">Pricing</div>
-  <h2 class="s-title">Simple pricing. <em style="font-style:italic;color:var(--cyan);">Cancel any time.</em></h2>
-  <p style="font-size:16px;color:var(--slate2);margin:0 auto;max-width:460px;line-height:1.8;text-align:center;">Start with 5 free listings. No credit card, no PayPal needed to start. Upgrade when you're ready.</p>
+  <h2 class="s-title">Simple pricing.<br><span class="it">Cancel any time.</span></h2>
+  <p style="font-size:16px;color:var(--slate2);margin:0 auto 0;max-width:460px;line-height:1.8;">Start with 5 free listings. No credit card, no PayPal needed to start. Upgrade when you're ready.</p>
   <div class="price-grid">
     <div class="pc fade-up">
       <div class="pc-plan">Starter</div><div class="pc-name">For individuals</div>
@@ -522,7 +565,7 @@ footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-i
 
 <!-- CTA -->
 <section class="cta-sec">
-  <h2>Start listing smarter<br><span style="font-style:italic;color:var(--cyan);">today. It's free.</span></h2>
+  <h2>Start listing smarter<br><span class="it">today. It's free.</span></h2>
   <p>Join 1,200+ eBay sellers who've stopped writing listings by hand. Your first 5 listings are completely free.</p>
   <button class="btn-hero" onclick="openAuth('signup')" style="margin:0 auto;">Create free account — 5 listings free<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   <div class="cta-trust">
@@ -533,42 +576,16 @@ footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-i
   </div>
 </section>
 
-<!-- CONTACT -->
-<section id="contact" class="contact-sec">
-  <div style="text-align:center;"><div class="s-eye">Contact us</div><h2 class="s-title">We're here to help</h2><p class="s-sub">Have a question about <span style="color:var(--eb);font-weight:600;">ListAI</span>? Need help getting started? Send us a message and we'll get back to you within 24 hours.</p></div>
-  <div class="contact-grid">
-    <div class="contact-info">
-      <h3>Get in touch</h3>
-      <p>Whether you have questions about pricing, need technical support, or want to learn how <span style="color:var(--eb);font-weight:600;">ListAI</span> can work for your eBay selling needs — we're happy to help.</p>
-      <div class="contact-detail"><div class="cd-icon">📧</div><div class="cd-text"><strong>Email Support</strong>support@ebaylistai.com</div></div>
-      <div class="contact-detail"><div class="cd-icon">⚡</div><div class="cd-text"><strong>Response Time</strong>Within 24 hours on business days</div></div>
-      <div class="contact-detail"><div class="cd-icon">🌍</div><div class="cd-text"><strong>Coverage</strong>eBay US marketplace supported</div></div>
-    </div>
-    <div class="contact-form">
-      <div class="cf-field"><label class="cf-label">Your name</label><input type="text" class="cf-input" id="cf-name" placeholder="Jane Smith" /></div>
-      <div class="cf-field"><label class="cf-label">Email address</label><input type="email" class="cf-input" id="cf-email" placeholder="jane@example.com" /></div>
-      <div class="cf-field"><label class="cf-label">Subject</label><input type="text" class="cf-input" id="cf-subject" placeholder="Question about Pro plan..." /></div>
-      <div class="cf-field"><label class="cf-label">Message</label><textarea class="cf-input" id="cf-message" placeholder="Tell us how we can help..."></textarea></div>
-      <button class="cf-btn" onclick="sendContact()">Send message →</button>
-      <div class="cf-msg" id="cf-msg"></div>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
 <footer>
-  <a href="#" style="display:flex;align-items:center;gap:9px;text-decoration:none;">
-    <div class="logo-icon" style="width:28px;height:28px;font-size:13px;">e</div>
-    <span style="font-size:18px;font-weight:800;color:var(--eb);">List</span><span style="font-size:18px;font-weight:800;color:#fff;">AI</span>
-  </a>
+  <a href="#" class="fl"><div class="logo-icon" style="width:28px;height:28px;font-size:13px;">L</div>ListAI</a>
   <ul class="f-links">
     <li><a href="#">Privacy Policy</a></li>
     <li><a href="#">Terms of Service</a></li>
     <li><a href="#">eBay API</a></li>
     <li><a href="listing-tool.html">Listing Tool</a></li>
-    <li><a href="#contact">Support</a></li>
+    <li><a href="#">Support</a></li>
   </ul>
-  <span class="f-copy">© 2026 EbayListAI · eBay US Listing Automation</span>
+  <span class="f-copy">© 2025 ListAI · eBay US Listing Automation</span>
 </footer>
 
 <!-- AUTH MODAL -->
@@ -598,11 +615,11 @@ footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-i
 </div>
 
 <script>
-const API="https://listai-api.onrender.com";
+const API = "https://listai-api.onrender.com"; // ← update after deploy
 function sd(v){document.getElementById('d-input').value=v;}
 async function runD(){
   const inp=document.getElementById('d-input').value.trim();
-  if(!inp){document.getElementById('d-input').style.borderColor='rgba(229,50,56,.5)';setTimeout(()=>document.getElementById('d-input').style.borderColor='',1200);return;}
+  if(!inp){document.getElementById('d-input').style.borderColor='rgba(239,68,68,.5)';setTimeout(()=>document.getElementById('d-input').style.borderColor='',1200);return;}
   const btn=document.getElementById('d-btn'),ph=document.getElementById('d-ph'),out=document.getElementById('d-out'),err=document.getElementById('do-err');
   btn.disabled=true;btn.classList.add('loading');out.classList.remove('show');err.style.display='none';ph.style.display='flex';
   const t0=Date.now();
@@ -621,11 +638,45 @@ async function runD(){
   }catch(e){ph.style.display='none';err.style.display='block';err.textContent=`⚠ ${e.message}`;}
   finally{btn.disabled=false;btn.classList.remove('loading');}
 }
-document.addEventListener('DOMContentLoaded',()=>{document.getElementById('d-input').addEventListener('keydown',e=>{if(e.key==='Enter')runD();});});
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('d-input').addEventListener('keydown',e=>{if(e.key==='Enter')runD();});
+  // ── Session detection ─────────────────────────────────────
+  const _token = localStorage.getItem('listai_token');
+  const _user  = JSON.parse(localStorage.getItem('listai_user')||'{}');
+  if(_token && _user && _user.name){
+    // Swap nav to show logged-in state
+    document.getElementById('nav-r').innerHTML=`
+      <a href="listing-tool.html" class="btn-ghost" style="color:var(--slate2);">Dashboard</a>
+      <span style="font-family:var(--fm);font-size:12px;color:var(--slate2);padding:0 4px;">👋 ${_user.name||_user.email||''}</span>
+      <button class="btn-cta" onclick="indexLogout()" style="background:rgba(255,255,255,.08);border:1px solid var(--border);">Sign out</button>`;
+  }
+  // ── Inactivity logout (5 hours) ───────────────────────────
+  const FIVE_HOURS = 5*60*60*1000;
+  const LAST_KEY   = 'listai_last_active';
+  function touchActive(){ localStorage.setItem(LAST_KEY, Date.now()); }
+  function checkInactivity(){
+    const last = parseInt(localStorage.getItem(LAST_KEY)||'0');
+    if(last && Date.now()-last > FIVE_HOURS){ indexLogout(); }
+  }
+  ['click','keydown','scroll','mousemove'].forEach(ev=>document.addEventListener(ev,touchActive,{passive:true}));
+  touchActive();
+  setInterval(checkInactivity, 60000); // check every minute
+});
+function indexLogout(){
+  localStorage.removeItem('listai_token');
+  localStorage.removeItem('listai_user');
+  localStorage.removeItem('listai_last_active');
+  window.location.reload();
+}
 function openAuth(t){document.getElementById('auth-modal').classList.add('open');document.body.style.overflow='hidden';sw(t||'signup');}
 function closeAuth(){document.getElementById('auth-modal').classList.remove('open');document.body.style.overflow='';}
 function hoc(e){if(e.target===document.getElementById('auth-modal'))closeAuth();}
-function sw(t){document.getElementById('f-su').style.display=t==='signup'?'':'none';document.getElementById('f-li').style.display=t==='login'?'':'none';document.getElementById('t-su').classList.toggle('active',t==='signup');document.getElementById('t-li').classList.toggle('active',t==='login');}
+function sw(t){
+  document.getElementById('f-su').style.display=t==='signup'?'':'none';
+  document.getElementById('f-li').style.display=t==='login'?'':'none';
+  document.getElementById('t-su').classList.toggle('active',t==='signup');
+  document.getElementById('t-li').classList.toggle('active',t==='login');
+}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAuth();});
 function sm(id,txt,type){const el=document.getElementById(id);el.textContent=txt;el.className=`m-msg ${type}`;}
 async function doSU(){
@@ -637,6 +688,7 @@ async function doSU(){
     const d=await r.json();
     if(!r.ok){sm('su-m',d.detail||'Signup failed.','err');return;}
     localStorage.setItem('listai_token',d.token);localStorage.setItem('listai_user',JSON.stringify(d));
+    localStorage.setItem('listai_last_active',Date.now());
     sm('su-m','✅ Account created! Check your email to verify. Redirecting...','ok');
     setTimeout(()=>window.location.href='listing-tool.html',2200);
   }catch(e){sm('su-m','Could not reach server. Make sure the backend is running.','err');}
@@ -649,18 +701,9 @@ async function doLI(){
     const d=await r.json();
     if(!r.ok){sm('li-m',d.detail||'Login failed.','err');return;}
     localStorage.setItem('listai_token',d.token);localStorage.setItem('listai_user',JSON.stringify(d));
+    localStorage.setItem('listai_last_active',Date.now());
     window.location.href='listing-tool.html';
   }catch(e){sm('li-m','Could not reach server.','err');}
-}
-function sendContact(){
-  const name=document.getElementById('cf-name').value.trim();
-  const email=document.getElementById('cf-email').value.trim();
-  const subject=document.getElementById('cf-subject').value.trim();
-  const message=document.getElementById('cf-message').value.trim();
-  const msg=document.getElementById('cf-msg');
-  if(!name||!email||!message){msg.textContent='Please fill in all required fields.';msg.className='cf-msg err';return;}
-  window.location.href=`mailto:support@ebaylistai.com?subject=${encodeURIComponent(subject||'ListAI Support')}&body=${encodeURIComponent('Name: '+name+'\nEmail: '+email+'\n\n'+message)}`;
-  msg.textContent='✅ Opening your email client...';msg.className='cf-msg ok';
 }
 const obs=new IntersectionObserver(en=>{en.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.1});
 document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));

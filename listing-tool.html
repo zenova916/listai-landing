@@ -218,7 +218,8 @@ textarea.lp-input{min-height:80px;line-height:1.6;}
 <!-- TOPBAR -->
 <div class="topbar">
   <a href="index.html" class="tb-logo">
-    <span class="tb-logo-text"><span style="color:#3665F3;">EbayList</span><span style="color:#fff;">AI</span></span>
+    <div class="tb-logo-icon">e</div>
+    <span class="tb-logo-text"><span style="color:#3665F3;">List</span><span style="color:#fff;">AI</span></span>
   </a>
   <div class="tb-center">
     <div class="tb-step done" id="step1"><div class="tb-step-num">✓</div> Input</div>
@@ -235,7 +236,7 @@ textarea.lp-input{min-height:80px;line-height:1.6;}
       <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       <span id="tb-ebay-label">Connect eBay</span>
     </button>
-    <span class="tb-user" id="tb-user-name">Loading...</span>
+    <span class="tb-user" id="tb-user-name" onclick="toggleProfileDropdown()" style="cursor:pointer;" title="View profile">Loading...</span>
     <button class="tb-logout" onclick="logout()">Sign out</button>
   </div>
 </div>
@@ -393,6 +394,7 @@ textarea.lp-input{min-height:80px;line-height:1.6;}
       <div class="gen-spin"></div>
       <span class="gen-lbl">✦ Generate listing with AI</span>
     </button>
+    <div style="font-family:var(--fm);font-size:10px;color:var(--slate);text-align:center;margin-top:8px;letter-spacing:.03em;">Powered by Groq AI (Llama 3.1 70B) · Free</div>
 
   </div><!-- /left-panel -->
 
@@ -1230,6 +1232,49 @@ function toast(msg, type='info') {
   setTimeout(() => t.remove(), 3500);
 }
 
+// ── Profile dropdown ──────────────────────────────────────────
+function toggleProfileDropdown() {
+  const existing = document.getElementById('profile-dropdown');
+  if (existing) { existing.remove(); return; }
+  const u = JSON.parse(localStorage.getItem('listai_user') || '{}');
+  const el = document.getElementById('tb-user-name');
+  const rect = el.getBoundingClientRect();
+  const dd = document.createElement('div');
+  dd.id = 'profile-dropdown';
+  dd.style.cssText = `position:fixed;top:${rect.bottom+6}px;right:${window.innerWidth-rect.right}px;
+    background:#0f1729;border:1px solid rgba(255,255,255,.14);border-radius:10px;
+    padding:16px;min-width:220px;z-index:9999;box-shadow:0 12px 40px rgba(0,0,0,.7);`;
+  dd.innerHTML = `
+    <p style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:6px;">Account</p>
+    <p style="font-size:14px;font-weight:700;color:#fff;margin-bottom:2px;">${u.name||'User'}</p>
+    <p style="font-size:11px;color:#94a3b8;margin-bottom:2px;">${u.email||''}</p>
+    <p style="font-size:11px;color:#94a3b8;margin-bottom:14px;">Plan: <span style="color:#f59e0b;font-weight:600;text-transform:capitalize;">${u.plan||'Free'}</span> · Listings: ${u.listings_used||0}/${u.listings_quota||5}</p>
+    <button onclick="logout()" style="width:100%;padding:8px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#f87171;border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;">Sign out</button>`;
+  document.body.appendChild(dd);
+  setTimeout(() => {
+    document.addEventListener('click', function close(e) {
+      if (!dd.contains(e.target) && !el.contains(e.target)) {
+        dd.remove();
+        document.removeEventListener('click', close);
+      }
+    });
+  }, 0);
+}
+
+// ── Inactivity logout (5 hours) ───────────────────────────────
+(function(){
+  const FIVE_HOURS = 5*60*60*1000;
+  const LAST_KEY = 'listai_last_active';
+  function touch(){ localStorage.setItem(LAST_KEY, Date.now()); }
+  function check(){
+    const last = parseInt(localStorage.getItem(LAST_KEY)||'0');
+    if(last && Date.now()-last > FIVE_HOURS){ logout(); }
+  }
+  ['click','keydown','scroll','mousemove'].forEach(ev=>document.addEventListener(ev,touch,{passive:true}));
+  touch();
+  setInterval(check, 60000);
+})();
+
 // ── eBay Connect ──────────────────────────────────────────────
 let ebayAccounts = [];
 
@@ -1257,59 +1302,10 @@ async function checkEbayStatus() {
 
 function handleEbayConnect() {
   if (ebayAccounts.length > 0) {
-    // toggle dropdown
-    const existing = document.getElementById('ebay-acct-dropdown');
-    if (existing) { existing.remove(); return; }
-    const acc = ebayAccounts[0];
-    const name = (acc.ebay_username && acc.ebay_username !== 'eBay account')
-      ? acc.ebay_username : (acc.email || acc.user_id || 'eBay account');
-    const env  = acc.sandbox ? '🟡 Sandbox' : '🟢 Production';
-    const btn  = document.getElementById('tb-ebay-btn');
-    const rect = btn.getBoundingClientRect();
-    const dd   = document.createElement('div');
-    dd.id = 'ebay-acct-dropdown';
-    dd.style.cssText = `position:fixed;top:${rect.bottom+6}px;right:${window.innerWidth-rect.right}px;
-      background:#0f1729;border:1px solid rgba(255,255,255,.14);border-radius:10px;
-      padding:14px 16px;min-width:210px;z-index:9999;
-      box-shadow:0 12px 40px rgba(0,0,0,.7);`;
-    dd.innerHTML = `
-      <p style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:6px;">eBay Account</p>
-      <p style="font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;">${name}</p>
-      <p style="font-size:11px;color:#94a3b8;margin-bottom:14px;">${env}</p>
-      <button onclick="doDisconnectEbay('${acc.id}')"
-        style="width:100%;padding:8px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);
-        color:#f87171;border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;">
-        Disconnect eBay
-      </button>`;
-    document.body.appendChild(dd);
-    // close on outside click
-    setTimeout(() => {
-      document.addEventListener('click', function close(e) {
-        if (!dd.contains(e.target) && !btn.contains(e.target)) {
-          dd.remove();
-          document.removeEventListener('click', close);
-        }
-      });
-    }, 0);
+    toast(`Connected as: ${ebayAccounts[0].ebay_username || 'eBay account'}`, 'success');
   } else {
     openEbayModal();
   }
-}
-
-async function doDisconnectEbay(id) {
-  const token = localStorage.getItem('listai_token');
-  try {
-    await fetch(`${API}/ebay/accounts/${id}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-  } catch(e) {}
-  ebayAccounts = [];
-  document.getElementById('tb-ebay-btn').classList.remove('connected');
-  document.getElementById('tb-ebay-label').textContent = 'Connect eBay';
-  const dd = document.getElementById('ebay-acct-dropdown');
-  if (dd) dd.remove();
-  toast('eBay account disconnected', 'success');
 }
 
 function openEbayModal() {
@@ -1324,6 +1320,14 @@ function connectEbay() {
   const token = localStorage.getItem('listai_token');
   if (!token) { toast('Please log in first', 'error'); return; }
   window.location.href = `${API}/ebay/connect?sandbox=true&token=${token}`;
+}
+
+function handleEbayConnect() {
+  if (ebayAccounts.length > 0) {
+    toast(`Connected as: ${ebayAccounts[0].ebay_username || 'eBay account'}`, 'success');
+  } else {
+    connectEbay();
+  }
 }
 
 // ── Init ──────────────────────────────────────────────────────
