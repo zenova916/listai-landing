@@ -235,7 +235,7 @@ textarea.lp-input{min-height:80px;line-height:1.6;}
       <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       <span id="tb-ebay-label">Connect eBay</span>
     </button>
-    <span class="tb-user" id="tb-user-name" onclick="window.location.href='account.html'" style="cursor:pointer;text-decoration:underline;text-underline-offset:3px;" title="My Account">Loading...</span>
+    <span class="tb-user" id="tb-user-name" onclick="toggleProfileDd()" style="cursor:pointer;" title="My Account">Loading...</span>
     <button class="tb-logout" onclick="logout()">Sign out</button>
   </div>
 </div>
@@ -628,7 +628,39 @@ document.getElementById('quota-total').textContent = user.listings_quota || 5;
 function logout() {
   localStorage.removeItem('listai_token');
   localStorage.removeItem('listai_user');
+  localStorage.removeItem('listai_last_active');
   window.location.href = 'index.html';
+}
+
+function toggleProfileDd() {
+  var existing = document.getElementById('profile-dd');
+  if (existing) { existing.remove(); return; }
+  var u    = JSON.parse(localStorage.getItem('listai_user') || '{}');
+  var span = document.getElementById('tb-user-name');
+  var rect = span.getBoundingClientRect();
+  var dd   = document.createElement('div');
+  dd.id = 'profile-dd';
+  dd.style.cssText = 'position:fixed;top:'+(rect.bottom+8)+'px;right:'+(window.innerWidth-rect.right)+'px;'
+    +'background:#0f1729;border:1px solid rgba(255,255,255,.15);border-radius:12px;'
+    +'padding:18px;min-width:230px;z-index:9999;box-shadow:0 16px 48px rgba(0,0,0,.7);';
+  var plan  = (u.plan || 'free');
+  var planLabel = plan.charAt(0).toUpperCase() + plan.slice(1);
+  var used  = u.listings_used  || 0;
+  var quota = u.listings_quota || 5;
+  dd.innerHTML =
+    '<p style="font-size:9px;font-family:\'DM Mono\',monospace;letter-spacing:.12em;text-transform:uppercase;color:#64748b;margin-bottom:10px;">Account</p>'+
+    '<p style="font-size:15px;font-weight:700;color:#fff;margin-bottom:3px;">'+(u.name||'User')+'</p>'+
+    '<p style="font-size:12px;color:#94a3b8;margin-bottom:3px;">'+(u.email||'')+'</p>'+
+    '<p style="font-size:12px;color:#94a3b8;margin-bottom:14px;">Plan: <span style="color:#f59e0b;font-weight:600;text-transform:capitalize;">'+planLabel+'</span>'+
+    ' &nbsp;·&nbsp; Listings: '+used+'/'+quota+'</p>'+
+    '<a href="account.html" style="display:block;width:100%;padding:9px;background:rgba(37,99,235,.15);border:1px solid rgba(37,99,235,.3);color:#93c5fd;border-radius:8px;font-size:13px;font-weight:600;text-align:center;text-decoration:none;margin-bottom:8px;">Manage Account</a>'+
+    '<button onclick="logout()" style="width:100%;padding:9px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#f87171;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;">Sign out</button>';
+  document.body.appendChild(dd);
+  setTimeout(function(){
+    document.addEventListener('click', function close(e){
+      if(!dd.contains(e.target) && e.target!==span){ dd.remove(); document.removeEventListener('click',close); }
+    });
+  }, 0);
 }
 
 // ── Mode switching ────────────────────────────────────────────
