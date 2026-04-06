@@ -325,54 +325,64 @@ function isPlanHigher(target, current) {
   return order.indexOf(target) > order.indexOf(current);
 }
 
-// Handle upgrade click — show PayPal button
+// Handle upgrade click — render PayPal button into visible container
 function handleUpgrade(plan) {
-  const ppDiv = document.getElementById('pp-' + plan);
   const btn   = document.getElementById('btn-' + plan);
+  const ppDiv = document.getElementById('pp-' + plan);
 
-  // Hide button, show PayPal
+  // Hide the upgrade button
   btn.style.display = 'none';
-  ppDiv.style.display = 'block';
 
-  if (window.paypal) {
+  // Clear and show the PayPal container
+  ppDiv.innerHTML = '';
+  ppDiv.style.display = 'block';
+  ppDiv.style.minHeight = '50px';
+
+  if (!window.paypal) {
+    ppDiv.innerHTML = '<p style="color:#f87171;font-size:12px;text-align:center;padding:10px;">PayPal could not load. Please disable any ad blocker and refresh.</p>';
+    btn.style.display = 'block';
+    return;
+  }
+
+  try {
     paypal.Buttons({
-      style: { shape:'rect', color:'blue', layout:'vertical', label:'subscribe', height:40 },
+      style: { shape:'rect', color:'blue', layout:'vertical', label:'subscribe', height:45 },
       createSubscription: function(data, actions) {
         return actions.subscription.create({ plan_id: PLAN_IDS[plan] });
       },
       onApprove: function(data) {
-        ppDiv.innerHTML = '<div style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);border-radius:8px;padding:14px;text-align:center;"><p style="color:#34d399;font-weight:700;font-size:14px;">✅ Payment received!</p><p style="color:var(--slate2);font-size:12px;margin-top:4px;">Your plan is activating. This takes up to 60 seconds.</p></div>';
+        ppDiv.innerHTML = '<div style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);border-radius:8px;padding:14px;text-align:center;"><p style="color:#34d399;font-weight:700;font-size:14px;">✅ Payment received!</p><p style="color:var(--slate2);font-size:12px;margin-top:4px;">Your plan is activating — takes up to 60 seconds.</p></div>';
         toast('Payment confirmed! Plan activating...', 'success');
-        // Poll /auth/me every 5 seconds for up to 60 seconds
         var attempts = 0;
         var poll = setInterval(async function() {
           attempts++;
           try {
-            const r = await fetch(`${API}/auth/me`, { headers: { 'Authorization': `Bearer ${token}` }});
+            const r = await fetch(API + '/auth/me', { headers: { 'Authorization': 'Bearer ' + token }});
             const u = await r.json();
             if (u.plan === plan) {
               clearInterval(poll);
               localStorage.setItem('listai_user', JSON.stringify(u));
               toast('🎉 ' + plan.charAt(0).toUpperCase()+plan.slice(1) + ' plan is now active!', 'success');
-              setTimeout(() => loadUser(), 500);
+              setTimeout(function() { loadUser(); }, 500);
             }
           } catch(e) {}
-          if (attempts >= 12) clearInterval(poll); // stop after 60s
+          if (attempts >= 12) clearInterval(poll);
         }, 5000);
       },
       onCancel: function() {
+        ppDiv.innerHTML = '';
         ppDiv.style.display = 'none';
         btn.style.display = 'block';
       },
       onError: function(err) {
-        ppDiv.style.display = 'none';
+        ppDiv.innerHTML = '<p style="color:#f87171;font-size:12px;text-align:center;padding:10px;">PayPal error. Please try again.</p>';
         btn.style.display = 'block';
-        toast('PayPal error. Please try again.', 'error');
-        console.error(err);
+        console.error('PayPal error:', err);
       }
-    }).render('#pp-' + plan);
-  } else {
-    ppDiv.innerHTML = '<p style="color:#f87171;font-size:12px;text-align:center;">PayPal failed to load. Please refresh the page.</p>';
+    }).render(ppDiv); // render into the DOM element directly, not a CSS selector
+  } catch(e) {
+    ppDiv.innerHTML = '<p style="color:#f87171;font-size:12px;text-align:center;padding:10px;">PayPal failed to load. Please refresh.</p>';
+    btn.style.display = 'block';
   }
 }
 
@@ -432,10 +442,16 @@ loadEbayAccounts();
 window.addEventListener('load', function() {
   var hash = window.location.hash.replace('#','');
   if (['starter','pro','agency'].includes(hash)) {
-    setTimeout(function() {
-      document.getElementById('card-' + hash).scrollIntoView({behavior:'smooth', block:'center'});
-      setTimeout(function() { handleUpgrade(hash); }, 600);
-    }, 1500); // wait for user data to load first
+    // Wait for PayPal SDK + user data to both be ready
+    var waitForPayPal = setInterval(function() {
+      if (window.paypal) {
+        clearInterval(waitForPayPal);
+        document.getElementById('card-' + hash).scrollIntoView({behavior:'smooth', block:'center'});
+        setTimeout(function() { handleUpgrade(hash); }, 400);
+      }
+    }, 200);
+    // Give up after 5 seconds
+    setTimeout(function() { clearInterval(waitForPayPal); }, 5000);
   }
 });
 
