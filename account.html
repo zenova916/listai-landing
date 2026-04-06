@@ -346,6 +346,7 @@ function handleUpgrade(plan) {
 
   try {
     paypal.Buttons({
+      fundingSource: paypal.FUNDING.PAYPAL,
       style: { shape:'rect', color:'blue', layout:'vertical', label:'subscribe', height:45 },
       createSubscription: function(data, actions) {
         return actions.subscription.create({ plan_id: PLAN_IDS[plan] });
