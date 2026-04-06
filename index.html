@@ -462,8 +462,10 @@ footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-i
 <section id="pricing" class="price-sec">
   <div class="s-eye">Pricing</div>
   <h2 class="s-title">Simple pricing. <em style="font-style:italic;color:var(--cyan);">Cancel any time.</em></h2>
-  <p style="font-size:16px;color:var(--slate2);margin:0 auto;max-width:460px;line-height:1.8;text-align:center;">Start with 5 free listings. No credit card, no PayPal needed to start. Upgrade when you're ready.</p>
+  <p style="font-size:16px;color:var(--slate2);margin:0 auto;max-width:460px;line-height:1.8;text-align:center;">Start with 5 free listings. No credit card needed. Upgrade when you're ready.</p>
   <div class="price-grid">
+
+    <!-- STARTER -->
     <div class="pc fade-up">
       <div class="pc-plan">Starter</div><div class="pc-name">For individuals</div>
       <div class="pc-desc">Perfect for casual sellers listing up to 50 products a month.</div>
@@ -479,8 +481,11 @@ footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-i
         <li><svg class="chk ci" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Auto-publish to eBay</li>
         <li class="dim"><svg class="xmk ci" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Image upload (Pro only)</li>
       </ul>
-      <button class="pc-btn out" onclick="openAuth('signup')">Start free trial</button>
+      <button class="pc-btn out" onclick="openAuth('signup')" style="margin-bottom:10px;">Start free — 5 listings</button>
+      <button class="pc-btn out" onclick="goUpgrade('starter')" style="background:rgba(37,99,235,.1);border-color:rgba(37,99,235,.3);color:#93c5fd;">Subscribe $29/mo →</button>
     </div>
+
+    <!-- PRO -->
     <div class="pc feat fade-up">
       <div class="pc-badge">Most popular</div>
       <div class="pc-plan">Pro</div><div class="pc-name">For serious sellers</div>
@@ -497,8 +502,11 @@ footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-i
         <li><svg class="chk ci" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Priority support</li>
         <li><svg class="chk ci" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Early access to new features</li>
       </ul>
-      <button class="pc-btn solid" onclick="openAuth('signup')">Start free trial</button>
+      <button class="pc-btn solid" onclick="openAuth('signup')" style="margin-bottom:10px;">Start free — 5 listings</button>
+      <button class="pc-btn solid" onclick="goUpgrade('pro')" style="background:rgba(37,99,235,.8);">Subscribe $79/mo →</button>
     </div>
+
+    <!-- AGENCY -->
     <div class="pc fade-up">
       <div class="pc-plan">Agency</div><div class="pc-name">For teams &amp; stores</div>
       <div class="pc-desc">For teams running multiple eBay stores at scale.</div>
@@ -514,8 +522,10 @@ footer{border-top:1px solid var(--border);padding:44px 52px;display:flex;align-i
         <li><svg class="chk ci" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>White-label reports</li>
         <li><svg class="chk ci" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Custom integrations</li>
       </ul>
-      <button class="pc-btn out" onclick="openAuth('signup')">Start free trial</button>
+      <button class="pc-btn out" onclick="openAuth('signup')" style="margin-bottom:10px;">Start free — 5 listings</button>
+      <button class="pc-btn out" onclick="goUpgrade('agency')" style="background:rgba(37,99,235,.1);border-color:rgba(37,99,235,.3);color:#93c5fd;">Subscribe $199/mo →</button>
     </div>
+
   </div>
   <div class="price-note">5 free listings with every new account · Paid plans via PayPal · No credit card for free tier</div>
 </section>
@@ -718,6 +728,18 @@ function toggleIndexUserDd(){
 })();
 const obs=new IntersectionObserver(en=>{en.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.1});
 document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+
+// ── Upgrade handler ───────────────────────────────────────────
+function goUpgrade(plan) {
+  var tok = localStorage.getItem('listai_token');
+  if (!tok) {
+    // Not logged in — open signup first
+    openAuth('signup');
+    return;
+  }
+  // Already logged in — go to account page to subscribe
+  window.location.href = 'account.html#' + plan;
+}
 </script>
 </body>
 </html>

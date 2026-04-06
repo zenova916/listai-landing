@@ -235,7 +235,7 @@ textarea.lp-input{min-height:80px;line-height:1.6;}
       <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       <span id="tb-ebay-label">Connect eBay</span>
     </button>
-    <span class="tb-user" id="tb-user-name">Loading...</span>
+    <span class="tb-user" id="tb-user-name" onclick="window.location.href='account.html'" style="cursor:pointer;text-decoration:underline;text-underline-offset:3px;" title="My Account">Loading...</span>
     <button class="tb-logout" onclick="logout()">Sign out</button>
   </div>
 </div>
@@ -1232,7 +1232,6 @@ function toast(msg, type='info') {
 
 // ── eBay Connect ──────────────────────────────────────────────
 let ebayAccounts = [];
-let ebayCanAddMore = false;
 
 async function checkEbayStatus() {
   const token = localStorage.getItem('listai_token');
@@ -1243,19 +1242,12 @@ async function checkEbayStatus() {
     });
     const d = await r.json();
     ebayAccounts = d.accounts || [];
-    ebayCanAddMore = d.can_add_more || false;
     const btn = document.getElementById('tb-ebay-btn');
     const lbl = document.getElementById('tb-ebay-label');
     if (ebayAccounts.length > 0) {
       btn.classList.add('connected');
-      const acc = ebayAccounts[0];
-      // Show email if available, else username, else fallback
-      const display = (acc.ebay_email && acc.ebay_email !== '')
-        ? acc.ebay_email
-        : (acc.ebay_username && acc.ebay_username !== 'eBay account')
-          ? acc.ebay_username
-          : '✓ eBay Connected';
-      lbl.textContent = `✓ ${display}`;
+      const username = ebayAccounts[0].ebay_username || 'eBay account';
+      lbl.textContent = `✓ ${username}`;
     } else {
       btn.classList.remove('connected');
       lbl.textContent = 'Connect eBay';
@@ -1264,78 +1256,44 @@ async function checkEbayStatus() {
 }
 
 function handleEbayConnect() {
-  const existing = document.getElementById('ebay-acct-dropdown');
-  if (existing) { existing.remove(); return; }
-
-  const btn  = document.getElementById('tb-ebay-btn');
-  const rect = btn.getBoundingClientRect();
-  const dd   = document.createElement('div');
-  dd.id = 'ebay-acct-dropdown';
-  dd.style.cssText = `position:fixed;top:${rect.bottom+6}px;right:${window.innerWidth-rect.right}px;
-    background:#0f1729;border:1px solid rgba(255,255,255,.14);border-radius:10px;
-    padding:16px;min-width:240px;z-index:9999;box-shadow:0 12px 40px rgba(0,0,0,.7);`;
-
-  if (ebayAccounts.length === 0) {
-    // No accounts — close dropdown and open modal
+  if (ebayAccounts.length > 0) {
+    // toggle dropdown
+    const existing = document.getElementById('ebay-acct-dropdown');
+    if (existing) { existing.remove(); return; }
+    const acc = ebayAccounts[0];
+    const name = (acc.ebay_username && acc.ebay_username !== 'eBay account')
+      ? acc.ebay_username : (acc.email || acc.user_id || 'eBay account');
+    const env  = acc.sandbox ? '🟡 Sandbox' : '🟢 Production';
+    const btn  = document.getElementById('tb-ebay-btn');
+    const rect = btn.getBoundingClientRect();
+    const dd   = document.createElement('div');
+    dd.id = 'ebay-acct-dropdown';
+    dd.style.cssText = `position:fixed;top:${rect.bottom+6}px;right:${window.innerWidth-rect.right}px;
+      background:#0f1729;border:1px solid rgba(255,255,255,.14);border-radius:10px;
+      padding:14px 16px;min-width:210px;z-index:9999;
+      box-shadow:0 12px 40px rgba(0,0,0,.7);`;
+    dd.innerHTML = `
+      <p style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:6px;">eBay Account</p>
+      <p style="font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;">${name}</p>
+      <p style="font-size:11px;color:#94a3b8;margin-bottom:14px;">${env}</p>
+      <button onclick="doDisconnectEbay('${acc.id}')"
+        style="width:100%;padding:8px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);
+        color:#f87171;border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;">
+        Disconnect eBay
+      </button>`;
+    document.body.appendChild(dd);
+    // close on outside click
+    setTimeout(() => {
+      document.addEventListener('click', function close(e) {
+        if (!dd.contains(e.target) && !btn.contains(e.target)) {
+          dd.remove();
+          document.removeEventListener('click', close);
+        }
+      });
+    }, 0);
+  } else {
     openEbayModal();
-    return;
   }
-
-  // Build list of all connected accounts
-  let accountsHTML = '';
-  ebayAccounts.forEach((acc, i) => {
-    const display = (acc.ebay_email && acc.ebay_email !== '')
-      ? acc.ebay_email
-      : (acc.ebay_username && acc.ebay_username !== 'eBay account')
-        ? acc.ebay_username
-        : `Account ${i + 1}`;
-    const env = acc.sandbox ? '🟡 Sandbox' : '🟢 Production';
-    accountsHTML += `
-      <div style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07);">
-        <p style="font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;">${display}</p>
-        <p style="font-size:11px;color:#94a3b8;margin-bottom:8px;">${env}</p>
-        <button onclick="doDisconnectEbay('${acc.id}')"
-          style="width:100%;padding:6px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);
-          color:#f87171;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;">
-          Disconnect
-        </button>
-      </div>`;
-  });
-
-  // Add account button if plan allows more
-  const addBtn = ebayCanAddMore
-    ? `<button onclick="addAnotherEbay()"
-        style="width:100%;padding:9px;background:rgba(37,99,235,.15);border:1px solid rgba(37,99,235,.35);
-        color:#93c5fd;border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;margin-top:12px;">
-        + Add another eBay account
-      </button>`
-    : `<p style="font-size:11px;color:#64748b;text-align:center;margin-top:12px;">
-        Upgrade plan to connect more accounts
-      </p>`;
-
-  dd.innerHTML = `
-    <p style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;
-      text-transform:uppercase;color:#64748b;margin-bottom:10px;">
-      eBay Accounts (${ebayAccounts.length})
-    </p>
-    ${accountsHTML}
-    ${addBtn}`;
-
-  document.body.appendChild(dd);
-  setTimeout(() => {
-    document.addEventListener('click', function close(e) {
-      if (!dd.contains(e.target) && !btn.contains(e.target)) {
-        dd.remove();
-        document.removeEventListener('click', close);
-      }
-    });
-  }, 0);
-}
-
-function addAnotherEbay() {
-  const dd = document.getElementById('ebay-acct-dropdown');
-  if (dd) dd.remove();
-  connectEbay();
 }
 
 async function doDisconnectEbay(id) {
