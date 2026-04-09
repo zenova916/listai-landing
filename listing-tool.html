@@ -972,7 +972,11 @@ function renderOutput(data) {
   const price = data.final_price || data.ai_price || 0;
   const cat   = data.ai_category || state.categoryPath || '';
   let specifics = {};
-  try { specifics = JSON.parse(data.final_specifics || data.ai_specifics || '{}'); } catch(e){}
+  try {
+    const raw = data.final_specifics || data.ai_specifics || '{}';
+    specifics = (typeof raw === 'string') ? JSON.parse(raw) : raw;
+    if (typeof specifics !== 'object' || Array.isArray(specifics)) specifics = {};
+  } catch(e){ specifics = {}; }
 
   // Title
   document.getElementById('out-title').textContent = title;
@@ -1056,7 +1060,7 @@ async function regenField(field) {
       } else if (field === 'category') {
         document.getElementById('out-category').textContent = d.value;
       } else if (field === 'specifics') {
-        try { renderSpecifics(JSON.parse(d.value), state.category); } catch(e){}
+        try { const sv = (typeof d.value==='string') ? JSON.parse(d.value) : d.value; renderSpecifics(sv||{}, state.category); } catch(e){}
       }
       toast(`${field.charAt(0).toUpperCase() + field.slice(1)} regenerated!`, 'success');
     } else {
