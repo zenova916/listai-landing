@@ -1298,7 +1298,7 @@ function handleEbayConnect() {
     if (existing) { existing.remove(); return; }
     const acc = ebayAccounts[0];
     const name = (acc.ebay_username && acc.ebay_username !== 'eBay account')
-      ? acc.ebay_username : (acc.email || acc.user_id || 'eBay account');
+      ? acc.ebay_username : (acc.ebay_email || 'eBay account');
     const env  = acc.sandbox ? '🟡 Sandbox' : '🟢 Production';
     const btn  = document.getElementById('tb-ebay-btn');
     const rect = btn.getBoundingClientRect();
