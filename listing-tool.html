@@ -984,7 +984,6 @@ function renderOutput(data) {
 
   // Category
   document.getElementById('out-category').textContent = cat || 'Click to set category';
-  // Set categoryId from AI response
   if (data.ai_category_id) state.categoryId = data.ai_category_id;
   if (!state.categoryId && cat) state.categoryId = getEbayCatId(cat);
 
@@ -1133,84 +1132,35 @@ function addSpecific() {
 
 // ── eBay Category ID map ──────────────────────────────────────
 const EBAY_CAT_IDS = {
-  // Electronics
-  "Cell Phones & Smartphones": "9355",
-  "Apple iPhones": "9355",
-  "Samsung Phones": "9355",
-  "Laptops & Netbooks": "177",
-  "Apple Laptops": "111422",
-  "Tablets & eBook Readers": "171485",
-  "Headphones": "112529",
-  "Portable Audio & Headphones": "15052",
-  "Cameras & Photo": "625",
-  "Digital Cameras": "31388",
-  "Video Games": "1249",
-  "Video Game Consoles": "139971",
-  "Televisions": "11071",
-  "Computer Components": "175673",
-  "Printers & Scanners": "1245",
-  // Clothing
-  "Men's Clothing": "1059",
-  "Women's Clothing": "15724",
-  "Men's Shoes": "93427",
-  "Women's Shoes": "3034",
-  "Men's T-Shirts": "185100",
-  "Women's Dresses": "63861",
-  "Hoodies & Sweatshirts": "185101",
-  "Jeans": "11483",
-  // Jewelry
-  "Fine Jewelry": "281",
-  "Fashion Jewelry": "10968",
-  "Rings": "67726",
-  "Necklaces & Pendants": "164342",
-  "Bracelets": "137835",
-  "Earrings": "10985",
-  "Watches": "31387",
-  // Home
-  "Home & Garden": "11700",
-  "Furniture": "3197",
-  "Kitchen & Dining": "20625",
-  "Bedding": "20444",
-  "Tools & Workshop Equipment": "631",
-  "Garden & Patio": "159912",
-  // Toys
-  "Toys & Hobbies": "220",
-  "LEGO Sets": "19006",
-  "Action Figures": "246",
-  "Dolls & Bears": "238",
-  "Building Toys": "183446",
-  // Sports
-  "Sporting Goods": "888",
-  "Golf": "1513",
-  "Cycling": "7294",
-  "Exercise & Fitness": "15273",
-  // Beauty
-  "Health & Beauty": "26395",
-  "Hair Care": "11854",
-  "Hair Dryers": "20710",
-  "Skin Care": "11863",
-  "Makeup": "31786",
-  // Books & Media
-  "Books": "267",
-  "Music CDs": "306",
-  "Movies & TV": "11232",
-  // Collectibles
-  "Collectibles": "1",
-  "Coins": "11116",
-  "Sports Cards": "212",
-  // Automotive
-  "Auto Parts": "6028",
-  "Car Electronics": "3270",
+  "Cell Phones & Smartphones":"9355","Apple iPhones":"9355","Samsung Phones":"9355",
+  "Laptops & Netbooks":"177","Apple Laptops":"111422","Tablets & eBook Readers":"171485",
+  "Headphones":"112529","Portable Audio & Headphones":"15052",
+  "Cameras & Photo":"625","Digital Cameras":"31388",
+  "Video Games":"1249","Video Game Consoles":"139971","Televisions":"11071",
+  "Men's Clothing":"1059","Women's Clothing":"15724",
+  "Men's Shoes":"93427","Women's Shoes":"3034",
+  "Men's T-Shirts":"185100","Women's Dresses":"63861",
+  "Hoodies & Sweatshirts":"185101","Jeans":"11483",
+  "Fine Jewelry":"281","Fashion Jewelry":"10968",
+  "Rings":"67726","Necklaces & Pendants":"164342",
+  "Bracelets":"137835","Earrings":"10985","Watches":"31387",
+  "Home & Garden":"11700","Furniture":"3197",
+  "Kitchen & Dining":"20625","Bedding":"20444",
+  "Tools & Workshop Equipment":"631","Garden & Patio":"159912",
+  "Toys & Hobbies":"220","LEGO Sets":"19006",
+  "Action Figures":"246","Dolls & Bears":"238","Building Toys":"183446",
+  "Sporting Goods":"888","Golf":"1513","Cycling":"7294","Exercise & Fitness":"15273",
+  "Health & Beauty":"26395","Hair Care":"11854","Hair Dryers":"20710",
+  "Skin Care":"11863","Makeup":"31786",
+  "Books":"267","Music CDs":"306","Movies & TV":"11232",
+  "Collectibles":"1","Coins":"11116","Sports Cards":"212",
+  "Auto Parts":"6028","Car Electronics":"3270",
 };
-
-function getEbayCatId(categoryPath) {
-  if (!categoryPath) return '';
-  // Try full path first, then last segment
-  if (EBAY_CAT_IDS[categoryPath]) return EBAY_CAT_IDS[categoryPath];
-  const parts = categoryPath.split('>').map(p => p.trim());
-  for (let i = parts.length - 1; i >= 0; i--) {
-    if (EBAY_CAT_IDS[parts[i]]) return EBAY_CAT_IDS[parts[i]];
-  }
+function getEbayCatId(p){
+  if(!p) return '';
+  if(EBAY_CAT_IDS[p]) return EBAY_CAT_IDS[p];
+  const parts=p.split('>').map(x=>x.trim());
+  for(let i=parts.length-1;i>=0;i--){if(EBAY_CAT_IDS[parts[i]])return EBAY_CAT_IDS[parts[i]];}
   return '';
 }
 
@@ -1385,7 +1335,7 @@ function handleEbayConnect() {
     if (existing) { existing.remove(); return; }
     const acc = ebayAccounts[0];
     const name = (acc.ebay_username && acc.ebay_username !== 'eBay account')
-      ? acc.ebay_username : (acc.email || acc.user_id || 'eBay account');
+      ? acc.ebay_username : (acc.ebay_email || 'eBay account');
     const env  = acc.sandbox ? '🟡 Sandbox' : '🟢 Production';
     const btn  = document.getElementById('tb-ebay-btn');
     const rect = btn.getBoundingClientRect();
