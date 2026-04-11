@@ -625,6 +625,27 @@ document.getElementById('tb-user-name').textContent = user.name || user.email ||
 document.getElementById('quota-used').textContent  = user.listings_used  || 0;
 document.getElementById('quota-total').textContent = user.listings_quota || 5;
 
+// ── Refresh quota from backend (always show live numbers) ─────
+(async function refreshQuota() {
+  try {
+    const r = await fetch(`${API}/auth/me`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (r.ok) {
+      const u = await r.json();
+      // Update display
+      document.getElementById('quota-used').textContent  = u.listings_used  || 0;
+      document.getElementById('quota-total').textContent = u.listings_quota === 999999 ? '∞' : (u.listings_quota || 5);
+      // Update localStorage so profile dropdown is also accurate
+      const cached = JSON.parse(localStorage.getItem('listai_user') || '{}');
+      cached.listings_used  = u.listings_used;
+      cached.listings_quota = u.listings_quota;
+      cached.plan           = u.plan;
+      localStorage.setItem('listai_user', JSON.stringify(cached));
+    }
+  } catch(e) { /* silently fail — cached values still show */ }
+})();
+
 function logout() {
   localStorage.removeItem('listai_token');
   localStorage.removeItem('listai_user');
@@ -952,6 +973,9 @@ async function generate() {
     renderOutput(data);
     setStep(3);
     toast('Listing generated!', 'success');
+    // Update quota display immediately (+1)
+    const usedEl = document.getElementById('quota-used');
+    usedEl.textContent = parseInt(usedEl.textContent || '0') + 1;
 
   } catch (e) {
     hideSkeleton();
