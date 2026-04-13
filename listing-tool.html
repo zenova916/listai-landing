@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EbayListAI — Create eBay Listing</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
@@ -625,27 +624,6 @@ document.getElementById('tb-user-name').textContent = user.name || user.email ||
 document.getElementById('quota-used').textContent  = user.listings_used  || 0;
 document.getElementById('quota-total').textContent = user.listings_quota || 5;
 
-// ── Refresh quota from backend (always show live numbers) ─────
-(async function refreshQuota() {
-  try {
-    const r = await fetch(`${API}/auth/me`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    if (r.ok) {
-      const u = await r.json();
-      // Update display
-      document.getElementById('quota-used').textContent  = u.listings_used  || 0;
-      document.getElementById('quota-total').textContent = u.listings_quota === 999999 ? '∞' : (u.listings_quota || 5);
-      // Update localStorage so profile dropdown is also accurate
-      const cached = JSON.parse(localStorage.getItem('listai_user') || '{}');
-      cached.listings_used  = u.listings_used;
-      cached.listings_quota = u.listings_quota;
-      cached.plan           = u.plan;
-      localStorage.setItem('listai_user', JSON.stringify(cached));
-    }
-  } catch(e) { /* silently fail — cached values still show */ }
-})();
-
 function logout() {
   localStorage.removeItem('listai_token');
   localStorage.removeItem('listai_user');
@@ -973,9 +951,19 @@ async function generate() {
     renderOutput(data);
     setStep(3);
     toast('Listing generated!', 'success');
-    // Update quota display immediately (+1)
-    const usedEl = document.getElementById('quota-used');
-    usedEl.textContent = parseInt(usedEl.textContent || '0') + 1;
+
+    // Update quota display + localStorage
+    const _u = JSON.parse(localStorage.getItem('listai_user') || '{}');
+    _u.listings_used = (_u.listings_used || 0) + 1;
+    localStorage.setItem('listai_user', JSON.stringify(_u));
+    document.getElementById('quota-used').textContent = _u.listings_used;
+    // Show upgrade nudge if quota nearly full
+    const _quota = _u.listings_quota || 5;
+    if (_u.listings_used >= _quota) {
+      toast('You have used all your listings. Upgrade your plan for more!', 'error');
+    } else if (_u.listings_used >= _quota - 1) {
+      toast('Only 1 listing left! Consider upgrading your plan.', 'info');
+    }
 
   } catch (e) {
     hideSkeleton();
